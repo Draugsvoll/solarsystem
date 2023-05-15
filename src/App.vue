@@ -219,29 +219,15 @@
       filter:brightness(80%);
     }
   }
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+
   .asteroid {
     display:none;
     z-index:0;
     position: absolute;
-    animation: move 150s;
+    animation: moveAsteroid 150s;
     top: 0;
     right: 0;
-    @keyframes move {
-      from {
-        transform: translate(0, 0);
-      }
-      to {
-        transform: translate(-100vw, 60vh);
-      }
-    }
+    
     img {
       width:3rem;
       opacity: 0.95;
@@ -274,7 +260,7 @@
       width:fit-content;
       display:flex;
       flex-direction: column;
-      transition: all 0.5s;
+      transition: all var(--transition-short);
       height:fit-content;
       &:hover {
         filter:brightness(120%);
@@ -285,7 +271,7 @@
         }
       }
       .planet-info {
-        transition: all 0.8s;
+        transition: all var(--transition-short);
         opacity:0;
         position: absolute;
         bottom:100%;
@@ -306,7 +292,7 @@
       }
       .planet-label {
         margin-bottom:0.1rem;
-        font-size: 0.85rem;
+        font-size: var(--font-size-xsmall);
         text-transform: capitalize;
         letter-spacing: var(--letter-spacing-medium);
       }
@@ -327,17 +313,7 @@
       }
     }
   }
-  @keyframes brightnessAnimation {
-    0% {
-      filter: brightness(99%);
-    }
-    50% {
-      filter: brightness(107%);
-    }
-    100% {
-      filter: brightness(99%);
-    }
-  }
+  
   */
 }
 

@@ -1,5 +1,14 @@
-<script setup lang="ts">
-
+<script  lang="ts">
+	export default {
+		setup(_, context) {
+			const closePlanetDetails = () => {
+			context.emit('closePlanetDetails', null)
+			}
+			return {
+				closePlanetDetails
+			}
+		}
+	}
 </script>
 
 <template>
@@ -18,6 +27,7 @@
 			<div class="img-container">
 				<img src="@/assets/planets/mars-img.jpg" alt="">
 			</div>
+			<button @click="closePlanetDetails()">Close</button>
 		</div>
 	</div>
 </template>
@@ -29,11 +39,9 @@
 	width:100%;
 	height:100%;
 	background: rgba(0,0,0,0.25);
-	border:1px solid red;
 	.modal {
 		width:40rem;
 		height:40rem;
-		border:1px solid yellow;
 		position: absolute;
 		top:50%;
 		left:50%;
@@ -49,7 +57,6 @@
 			margin:0;
 			width:100%;
 			height:35rem;
-			border:1px solid red;
 			img {
 				width:100%;
 				height:100%;

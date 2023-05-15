@@ -1,8 +1,12 @@
+@import "./keyframes.scss";
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.2rem;
   color: var(--color-font-white-transparent);
   letter-spacing: var(--letter-spacing-xsmall);
+  overflow:hidden;
+  font-size: var(--font-size-small);
 
   --color-primary:rgb(112, 193, 244);
   --color-font-white-transparent:rgba(255, 255, 255, 0.87);
@@ -11,15 +15,19 @@
   --letter-spacing-small: 0.04rem;
   --letter-spacing-medium: 0.06rem;
 
-  --orbit-width:13rem;
+  --font-size-xsmall: 0.80rem;
+  --font-size-small: 0.93rem;
 
+  --transition-short:0.5s;
+  --transition-medium:1s;
+
+  --orbit-width:13rem;
 }
 * {
   margin:0;
   padding:0;
   box-sizing: border-box;
 }
-
 
 h1,h2,h3,h4,h5,h6 {
   font-weight: 300;
@@ -28,14 +36,17 @@ h1,h2,h3,h4,h5,h6 {
 
 button {
   border-radius: 4px;
-  border: 1px solid var(--color-primary);
+  border: 2px solid var(--color-primary);
   padding: 0.6rem 1.2em;
-  font-weight: 500;
   background-color: transparent;
-  cursor: pointer;
   color:var(--color-font-white-transparent);
   transition: border-color 0.25s;
+  cursor: pointer;
 }
 button:hover {
   border-color: var(--color-primary);
+}
+button,input,textarea {
+  font-size: var(--font-size-small);
+  letter-spacing: var(--letter-spacing-small);
 }

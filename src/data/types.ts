@@ -1,7 +1,8 @@
-export type planetSynopsis = {
+export type planetSummary = {
 	name: string
 	stats: stat[]
 	synopsis: string
+	imageUrl: string
 }
 
 type stat = {
