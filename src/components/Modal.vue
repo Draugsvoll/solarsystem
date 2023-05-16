@@ -1,12 +1,20 @@
 <script  lang="ts">
+import { PropType } from 'vue';
+import { planetSummary } from '../data/types';
+
 	export default {
-		setup(_, context) {
+		props: {
+			planet: {
+				type: Object as PropType<planetSummary>,
+				required: true,
+			},
+		},
+		setup(props, context, ) {
+			const planet = props.planet
 			const closePlanetDetails = () => {
-			context.emit('closePlanetDetails', null)
+				context.emit('closePlanetDetails', null)
 			}
-			return {
-				closePlanetDetails
-			}
+			return {closePlanetDetails, planet}
 		}
 	}
 </script>
@@ -14,19 +22,14 @@
 <template>
 	<div class="modal-container">
 		<div class="modal">
-			<div><h1>Planet title</h1></div>
-			<div class="stats">
-				<h2>mad stats</h2>
-				<h2>mad stats</h2>
-				<h2>mad stats</h2>
-				<h2>mad stats</h2>
-			</div>
-			<div class="description">
-				<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, sit ut mollitia eligendi, odio incidunt sint optio possimus omnis minima veritatis, commodi nam hic accusantium quisquam molestias dolores molestiae ad explicabo quae quibusdam labore placeat id expedita. Error maxime ab atque magni reiciendis, laboriosam libero eos nisi a! Accusamus provident aut, qui quia voluptas ipsam ducimus accusantium odio ratione, molestiae veritatis eos iure eaque sed eum culpa. Quos aliquam magnam ullam tenetur repellendus nostrum consectetur cum rerum perspiciatis fuga dolorem laborum mollitia, quam, vitae ut veniam molestias odit fugiat facere tempora eveniet eos suscipit! Fuga doloribus tenetur aperiam iusto necessitatibus?</p>
-			</div>
-			<div class="img-container">
-				<img src="@/assets/planets/mars-img.jpg" alt="">
-			</div>
+			<div><h1>{{planet['name']}}</h1></div>
+			<!-- <div><h1>{{planet.name}}</h1></div> -->
+			<p v-for="stat in planet.stats" class="planet-stats">
+				<p>{{stat.label}} {{stat.value}}</p>
+			</p>
+			<div class="description"><p>{{planet.synopsis}}</p></div>
+			<div class="description"><p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae veritatis consectetur consequuntur velit. Expedita minima magni sunt praesentium non officia voluptas labore dolores quasi reprehenderit ea animi esse sapiente repellendus sequi, ipsam, doloribus ratione quo aut excepturi nulla. Quasi quam error aspernatur doloribus dolore sed! Deserunt nesciunt nulla consequuntur temporibus quo rerum quia eius aliquam, esse, dolores et vero unde non placeat consequatur atque voluptates animi, dolorum dolorem dicta laboriosam voluptatum itaque? Aspernatur facere delectus nihil illum qui maiores, quae sed, in reprehenderit tenetur natus sit explicabo fuga quaerat non vel necessitatibus modi. Autem dolorum tenetur tempore sint eveniet laudantium!</p></div>
+			<div class="img-container"><img src="@/assets/planets/mars-img.jpg" alt=""></div>
 			<button @click="closePlanetDetails()">Close</button>
 		</div>
 	</div>

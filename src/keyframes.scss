@@ -94,6 +94,14 @@
       transform: rotate(0deg);
     }
   }
+  @keyframes rotateReverse {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
   @keyframes moveAsteroid {
 	from {
 	  transform: translate(0, 0);
@@ -104,12 +112,12 @@
   }
   @keyframes brightnessAnimationSun {
 	0% {
-		filter: brightness(74%);
+		filter: brightness(70%);
 	}
 	50% {
-		filter: brightness(80%);
+		filter: brightness(78%);
 	}
 	100% {
-		filter: brightness(74%);
+		filter: brightness(70%);
 	}
 }

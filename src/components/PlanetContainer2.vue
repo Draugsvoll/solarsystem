@@ -1,13 +1,19 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
 	import Modal from './Modal.vue'
-	import {planetsSummary} from '../data/planets'
+	import {planets} from '../data/planets'
+    import type { Planet } from '../data/types';
 
-	const planetsEl = ref(<HTMLElement|null>null)
-	const planetFocused = ref(<undefined|number>undefined)
+	const scaleableEls = ref(<HTMLElement|null>null)
+	const planetInModal = ref(<undefined|Planet>undefined)
+	const planetsEl = ref(<undefined|HTMLElement[]>undefined)
+	const showingRealSizePlanet = ref(false)
 
-	const brightness = ref(200)
+	const dayCounter = ref(0)
+	const daysPerSecond = ref(25)
+	const brightness = ref(100)
 	const showOrbits = ref(true)
+	const showDays = ref(true)
 	const playAnimation = ref(true)
 	const planetWidthFake = '4.2rem'
 	const planetWidthReal = '52rem'
@@ -15,14 +21,14 @@
 	const showSun = ref(true)
 	let currentScaling = 100
 	
-	function handleMouseScroll(event) {
+	function handleMouseScroll(event: WheelEvent) {
 		const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1
 		if (!event.ctrlKey || !event.metaKey) {
 			event.preventDefault()
 			zoomContent(zoomFactor)
 		}
 	}
-	function zoomContent(zoomFactor) {
+	function zoomContent(zoomFactor: number) {
 		if (zoomFactor > 1) {
 			if (currentScaling > 250) return
 			currentScaling += 5
@@ -31,86 +37,128 @@
 			if (currentScaling < 20) return
 			currentScaling -= 5
 		}
-		planetsEl.value.style.transform= `scale(${currentScaling / 100})`
+		if (scaleableEls.value?.style.transform !== undefined) {
+			scaleableEls.value.style.transform = `scale(${currentScaling / 100})`;
+		}
 	}
 
 	function fullscreen () {
-    const element = document.documentElement; // Select the root element of the document
-    if (element.requestFullscreen) {
-      element.requestFullscreen();
-    } else if (element.mozRequestFullScreen) { // For Firefox
-      element.mozRequestFullScreen();
-    } else if (element.webkitRequestFullscreen) { // For Chrome, Safari, and Opera
-      element.webkitRequestFullscreen();
-    } else if (element.msRequestFullscreen) { // For Internet Explorer and Edge
-      element.msRequestFullscreen();
-    }
-  }
-  function exitFullscreen () {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) { // For Firefox
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) { // For Chrome, Safari, and Opera
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) { // For Internet Explorer and Edge
-      document.msExitFullscreen();
-    }
-  }
+		const element = document.documentElement; // Select the root element of the document
+		if (element.requestFullscreen) {
+			element.requestFullscreen();
+		} else if (element.mozRequestFullScreen) { // For Firefox
+			element.mozRequestFullScreen();
+		} else if (element.webkitRequestFullscreen) { // For Chrome, Safari, and Opera
+			element.webkitRequestFullscreen();
+		} else if (element.msRequestFullscreen) { // For Internet Explorer and Edge
+			element.msRequestFullscreen();
+		}
+	}
+	function exitFullscreen () {
+		if (document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if (document.mozCancelFullScreen) { // For Firefox
+			document.mozCancelFullScreen();
+		} else if (document.webkitExitFullscreen) { // For Chrome, Safari, and Opera
+			document.webkitExitFullscreen();
+		} else if (document.msExitFullscreen) { // For Internet Explorer and Edge
+			document.msExitFullscreen();
+		}
+	}
 
 	function adjustBrightness() {
 		let videoEl = document.querySelector('video')
 		if (!videoEl) return
 		videoEl.style.filter = `brightness(${brightness.value}%)`
 	}
-	
+
 	function toggleAnimation () {
 		let prevValue = playAnimation.value
 		playAnimation.value = prevValue
-		let planets = document.querySelectorAll('.planet')
-		planets.forEach(planet => {
-		if (playAnimation.value === false){
-			planet.classList.add('pause-animation')
-		}
-		else {
-			planet.classList.remove('pause-animation')
-		}
-
+		let planetImages = document.querySelectorAll('.img-planet')
+		planetsEl.value?.forEach(planet => {
+			if (playAnimation.value === false){
+				planet.classList.add('pause-animation')
+			}
+			else {
+				planet.classList.remove('pause-animation')
+			}
+		})
+		planetImages.forEach(planet => {
+			if (playAnimation.value === false){
+				planet.classList.add('pause-animation')
+			}
+			else {
+				planet.classList.remove('pause-animation')
+			}
 		})
   }
 
-	function clickPlanet (id: string) {
-		planetFocused.value = 2
-		let image = document.getElementById('img-'+id)
-		let earthEl = document.getElementById('earth')
-		if (!image) return
-		if (image.style.width == planetWidthReal) {
+	function displayPlanetsFakeSize () {
+		let images = document.querySelectorAll('.img-planet') as NodeListOf<HTMLElement>;
+		let earthEl = document.getElementById('earth') as HTMLElement;
+		let earthImg = document.getElementById('img-earth') as HTMLImageElement;
+		if (!images) return
+
+		images.forEach(image => {
 			image.style.width = planetWidthFake
-			image.parentNode?.classList.remove('planet-real-size')
-			earthEl.classList.remove('center-earth-freeze')
-		}
-		else {
-			image.style.width = planetWidthReal
-			image.parentNode?.classList.add('planet-real-size')
-			earthEl.classList.add('center-earth-freeze')
-		}
+			image.classList.remove('planet-rotate-slow')
+		})
+		planetsEl.value?.forEach(planet => {
+			planet.classList.remove('planet-real-size')
+		})
+		earthEl?.classList.remove('center-earth-freeze')
+		earthImg?.classList.remove('pause-animation')
+		showingRealSizePlanet.value = false
+		showSun.value = true
+	}
+	
+	function displayPlanetRealSize(id: string) {
+		let image = document.getElementById('img-'+id)
+		let parentNode = image?.parentNode as HTMLElement | null;
+		let earthEl = document.getElementById('earth')
+		let earthImg = document.getElementById('img-earth')
+
+		if (!image) return
+		image.style.width = planetWidthReal
+		image.classList.add('planet-rotate-slow')
+		parentNode?.classList.add('planet-real-size')
+		earthImg?.classList.add('pause-animation')
+		earthEl?.classList.add('center-earth-freeze')
+		showingRealSizePlanet.value = true
+		showSun.value = false
+	}
+
+	function openPlanetDetails (id: string) {
+		planetInModal.value = planets.find(planet => {
+			return planet.name = id
+		})
+	}
+
+	function closeModal () {
+		planetInModal.value = undefined
 	}
 
 	function setPlanetImageWidth () {
-		let images = document.querySelectorAll(".img-planet")
+		let images = document.querySelectorAll(".img-planet") as NodeListOf<HTMLElement>;
 		images.forEach(image => {
 			image.style.width = planetWidthFake
 		})
 	}
 
-	function fetchPlanetsElements () {
-		planetsEl.value = document.querySelectorAll(".planet-container-2")[0] as HTMLElement
+	function fetchElements () {
+		scaleableEls.value = document.querySelectorAll(".planet-container-2")[0] as HTMLElement
+		planetsEl.value = document.querySelectorAll(".planet") as unknown as HTMLElement[];
 	}
 
 	onMounted(() => {
 		setPlanetImageWidth()
-		fetchPlanetsElements()
-		console.error('1234 ',planetsSummary )
+		fetchElements()
+
+		setInterval(() => {
+			dayCounter.value += (daysPerSecond.value/20)
+		}, 50)
+
 	})
 
 </script>
@@ -121,17 +169,24 @@
 		  <h3>Planet Explorer</h3>
 		</div>
 		<div>
-		  <p class="notify-scrolling">Use mouse-scroll to zoom</p>
+		  <p class="notify-scrolling">Scroll to zoom</p>
 		</div>
 		<div>
-			<span class="setting-label">View orbits</span><input type="checkbox" v-model="showOrbits"><br>
-			<span class="setting-label">View Labels</span><input type="checkbox" v-model="showLabels"><br>
-			<span class="setting-label">View sun</span><input type="checkbox" v-model="showSun"><br>
+			<span class="setting-label">Orbits</span><input type="checkbox" v-model="showOrbits"><br>
+			<span class="setting-label">Labels</span><input type="checkbox" v-model="showLabels"><br>
+			<span class="setting-label">Sun</span><input type="checkbox" v-model="showSun"><br>
+			<span class="setting-label">Days</span><input type="checkbox" v-model="showDays"><br>
 			<span class="setting-label">Animate</span><input type="checkbox" v-model="playAnimation" @change="toggleAnimation()"><br>
 		</div>
-		<div>
-			<span class="label-range-input-stars">Stars</span>
-			<input type="range" v-model="brightness" @input="adjustBrightness()" min="50" max="500" step="10">
+		<div class="range-container">
+			<div>
+				<span class="label-range-input-stars">Stars</span>
+				<input type="range" v-model="brightness" @input="adjustBrightness()" min="50" max="500" step="10">
+			</div>
+			<div>
+				<span class="label-range-input-stars" >Days-per-second: {{daysPerSecond}}</span>
+				<input type="range" v-model="daysPerSecond" min="1" max="365" step="1">
+			</div>
 		</div>
 		<div class="btn-row">
 		  <button @click="fullscreen()">Fullscreen</button>
@@ -139,186 +194,66 @@
 		</div>
 	</div>
 
-	<!-- <Modal v-if="planetFocused" /> -->
+	<Modal :planet="planetInModal" v-if="planetInModal" @closePlanetDetails="closeModal()" />
+	
 	
 	<div class="planet-container-2"  @wheel="handleMouseScroll">
-
+		
 		<div class="orbit-container" v-if="showOrbits">
-			<div class="orbit orbit1"></div>
-			<div class="orbit orbit2"></div>
-			<div class="orbit orbit3"></div>
-			<div class="orbit orbit4"></div>
-			<div class="orbit orbit5"></div>
-			<div class="orbit orbit6"></div>
-			<div class="orbit orbit7"></div>
-			<div class="orbit orbit8"></div>
+			<div v-for="planet,index in planets" :class="'orbit'+' orbit'+(index+1)+' ' +'orbit-'+planet.name"></div>
 		</div>
-
+		
 		<div v-if="showSun" class="sun">
 			<img src="@/assets/sun.png" alt="" srcset="">
 		</div>
+		<p v-if="showDays" class="day-counter">Day: {{Math.floor(dayCounter).toLocaleString()}}</p>
 
-		<div v-for="planet, index in planetsSummary" :id="planet.name"  :class="'planet planet'+(index+1)">
+		<div 
+			v-for="planet, index in planets" :id="planet.name"
+			:class="'planet planet'+(index+1)"
+			:style="
+				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'">
 			<img :id="'img-'+planet.name" class="img-planet" :src="planet.imageUrl" alt="" srcset="">
 			<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
 			<div class="planet-info">
 				<h3 class="planet-name">{{planet.name}}</h3>
-				<p v-for="stat in planet.stats" class="planet-stats">
-					<p>{{stat.label}} {{stat.value}}</p>
-				</p>
+				<div>
+					<p v-for="stat in planet.stats" class="planet-stats">
+						<p>{{stat.label}} {{stat.value}}</p>
+					</p>
+				</div>
 				<p class="planet-infotext">{{planet.synopsis}}</p>
-				<button @click="clickPlanet(planet.name)">Real size</button>
+				<div>
+					<button v-if="!showingRealSizePlanet && planet.name !== 'earth'" @click="displayPlanetRealSize(planet.name)">Real size</button>
+					<button v-else-if="showingRealSizePlanet" @click="displayPlanetsFakeSize()">Reset size</button>
+					<button @click="openPlanetDetails(planet.name)">Details</button>
+				</div>
 			</div>
 		</div>
 
-		<div class="planet mercury">
-			<img id="img-mercury" class=" img-planet" src="@/assets/mercury.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>testing</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				mercury
-			  </h3>
-			  <p class="planet-stats">
-				<p>Age: 3</p>
-				<p>Size: 999</p>
-				<p>Duration: 68546</p>
-			  </p>
-			  <p class="planet-infotext">
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('mercury')">Real size</button>
-			</div>
-		</div>
-
-		<div class="planet planet1">
-			<img id="mercury" class=" img-planet" src="@/assets/mercury.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>mercury</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				mercury
-			  </h3>
-			  <p class="planet-stats">
-				<p>Age: 3</p>
-				<p>Size: 999</p>
-				<p>Duration: 68546</p>
-			  </p>
-			  <p class="planet-infotext">
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('mercury')">Real size</button>
-			</div>
-		</div>
-
-		
-		  <div class="planet planet2">
-			<img id="venus" class=" img-planet" src="@/assets/venus.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>venus</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				venus
-			  </h3>
-			  <p>
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('venus')">Real size</button>
-			</div>
-		  </div>
-	
-		  <div class="planet planet3">
-			<img id="earth" class="img-planet" src="@/assets/earth.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>earth</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				earth
-			  </h3>
-			  <p>
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('earth')">Real size</button>
-			</div>
-		  </div>
-	
-		  <div class="planet planet4">
-			<img id="mars" class="img-planet" src="@/assets/mars.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>mars</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				mars
-			  </h3>
-			  <p>
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('mars')">Real size</button>
-			</div>
-		  </div>
-	
-		  <div class="planet planet5">
-			<img id="jupiter" class="img-planet" src="@/assets/jupiter.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>jupiter</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				jupiter
-			  </h3>
-			  <p>
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('jupiter')">Real size</button>
-			</div>
-		  </div>
-	
-		  <div class="planet planet6">
-			<img id="saturn" class=" img-planet" src="@/assets/saturn.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>saturn</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				saturn
-			  </h3>
-			  <p>
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('saturn')">Real size</button>
-			</div>
-		  </div>
-	
-		  <div class="planet planet7">
-			<img id="uranus" class="img-planet" src="@/assets/uranus.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>uranus</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				uranus
-			  </h3>
-			  <p>
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('uranus')">Real size</button>
-			</div>
-		  </div>
-	
-		  <div class="planet planet8">
-			<img id="neptune" class="img-planet" src="@/assets/neptune.png" alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>neptune</p></div>
-			<div class="planet-info">
-			  <h3 class="planet-name">
-				neptune
-			  </h3>
-			  <p>
-				pwogkpwkgpwegkpweogkwpeokgpweogkpwoeg
-			  </p>
-			  <button @click="clickPlanet('neptune')">Real size</button>
-			</div>
-		  </div>
 	</div>
 </template>
 
 
 <style lang="scss" scoped>
-
 .planet-container-2 {
 	z-index:1;
 	position:absolute;
 	width:100%;
 	height:100%;
-	z-index:1;
+	.day-counter {
+		position:absolute;
+		top:57%;
+		left:50%;
+		transform: translate(-50%, -50%);
+		background:rgba(0,0,0,0.2);
+		padding:0.25rem 0.5rem;
+		border-radius: 5px;
+		z-index:15;
+		user-select: none;
+		min-width:5rem;
+		text-align: center;
+	}
 	.sun {
 		position: absolute;
 		width:fit-content;
@@ -327,6 +262,7 @@
 		left:50%;
 		transform: translate(-50%, -50%);
 		animation: brightnessAnimationSun 5s linear infinite;
+		z-index:1;
 		img {
 		  position: absolute;
 		  top:50%;
@@ -334,6 +270,7 @@
 		  transform: translate(-50%, -50%);
 		  width:20rem;
 		  width:20rem;
+		  z-index:2;
 		}
 	  }
 	.orbit-container {
@@ -384,42 +321,41 @@
 	.planet { 
 	  position: absolute;
 	  display:flex;
-	  min-width:3rem;
+	  min-width:2rem;
 	  flex-direction: column;
 	  transition: all 0.5s;
-	  top: 50%;
-	  left: 50%;
-	  transform: translate(-50%, -50%);
-	  border:solid;
+	  top: calc(50vh - 2rem); /* 2rem equals planetHeight/2 */
+	  left: calc(50vw - 4.2rem/2); /* 4.2 equals planetWidthFake */
 	  width: fit-content;
 	  height: fit-content;
 	  animation-play-state: running;
 	  user-select: none;
 	  &:hover {
-		z-index:100;
-		animation-play-state: paused;
+		animation-play-state: paused !important;
 		filter:brightness(115%);
 		.planet-info {
 		  display: flex;
 		  flex-direction: column;
-		  gap:1rem;
 		  opacity: 1;
 		  pointer-events: all;
 		}
 	  }
 	  .planet-info {
-		transition: all 0.8s;
+		transition: all var(--transition-short); ;
 		opacity:0;
 		position: absolute;
 		bottom:90%;
-		background: rgba(13, 16, 17, 0.85);
+		left:50%;
+		background: rgba(13, 16, 17, 0.5);
+		border-top-right-radius:var(--border-radius-small);
+		border-bottom-right-radius:var(--border-radius-small);
 		border-left:1px solid rgba(135, 206, 250, 0.85);
 		padding:1rem;
 		width:15rem;
 		display: flex;
 		flex-direction: column;
 		pointer-events: none;
-		gap:var(--planet-gap);
+		gap:1rem;
 		.planet-name {
 		  color:var(--color-primary);
 		  text-align: left;
@@ -436,14 +372,8 @@
 		color:rgba(255, 255, 255, 0.80);
 		text-align: center;
 	  }
-	  .flip-image {
-		transform: scaleX(-1);
-	  }
-	  .rotate45 {
-		transform: rotate(-45deg);
-	  }
 	  img {
-		animation: rotate 35s linear infinite reverse;
+		animation: rotate var(--planet-rotate-speed) linear infinite reverse;
 		transition: 0.9s all;
 		border-radius: 100%;
 		margin:auto;
@@ -453,58 +383,42 @@
 	   -webkit-user-drag: none; /* For Safari */
 	  }
 	}
-	.planet1 {
-	animation-delay:-3s;
-	  z-index:10;
-  }
-  .planet2 {
-	animation: orbit2 20s linear infinite;
-	animation-delay:-6s;
-	z-index:9;
-  }
-  .planet3 {
-	z-index:99 !important;
-	animation-delay:-9s;
-	animation: orbit3 10s linear infinite;
-  }
-  .planet4 {
-	animation: orbit4 15s linear infinite;
-	animation-delay:-12s;
-	z-index:8;
-  }
-  .planet5 {
-	animation: orbit5 25s linear infinite;
-	animation-delay:-15s;
-	z-index:7;
+}
+	.planet:hover {
+		z-index:98 !important;
 	}
-  }
-  .planet6 {
-	animation: orbit6 18s linear infinite;
-	animation-delay:-18s;
-	z-index:6;
-  }
-  .planet7 {
-	animation: orbit7 30s linear infinite;
-	animation-delay:-21s;
-	z-index:5;
-  }
-  .planet8 {
-	animation: orbit8 35s linear infinite;
-	animation-delay:-24s;
-	z-index:4;
-	}
-
   .pause-animation {
 	animation-play-state: paused !important;
   }
   .planet-real-size {
+	filter:brightness(92%) !important;
 	animation-play-state: paused !important;
+	top:50% !important;
+	left:50% !important;
 	transform:translate(-50%, -50%) !important;
 	z-index:98 !important;
+	.planet-info {
+		top:30%;
+		left:55% !important;
+		height:fit-content;
+		gap:2rem !important;
+	}
+	&:hover {
+		filter:brightness(92%);
+		.planet-info {
+			gap:2rem !important;
+		}
+	}
+}
+  .planet-rotate-slow {
+	animation: rotate var(--planet-rotate-speed-slow) linear infinite !important;
   }
+
   .center-earth-freeze {
 	animation-play-state: paused !important;
 	transform:translate(-150%, -25%) !important;
+	z-index:99 !important;
+	pointer-events: none;
   }
   .sidebar {
 	padding:0.7rem;
@@ -521,17 +435,25 @@
 	}
 	.setting-label {
 	  display:inline-block;
-	  width:6rem;
+	  width:4.5rem;
 	}
-	.label-range-input-stars {
-	  display:block;
-	}
-	input[type="range"] {
-	  margin-top:0;
-	  width: 8rem;
-	  height: 0.6rem;
-	  border-radius: 5px;
-	  accent-color: var(--color-primary);
+	.range-container {
+		display:flex;
+		flex-direction: column;
+		gap:1rem;
+		justify-content: space-between;
+		input[type="range"] {
+		  margin-top:0;
+		  width: 8rem;
+		  height: 0.6rem;
+		  border-radius: 5px;
+		  display:block;
+		  accent-color: var(--color-primary);
+		}
+		div > span {
+			margin-bottom:0.35rem;
+			display:block;
+		}
 	}
 	input[type="checkbox"] {
 	  width:1rem;
@@ -539,4 +461,9 @@
 	  accent-color: var(--color-primary);
 	}
   }
+#img-saturn {
+	animation:none !important;
+	padding-top:0.8rem;
+}
+
 </style>

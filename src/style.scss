@@ -1,4 +1,5 @@
 @import "./keyframes.scss";
+@import "./scrollbar.scss";
 
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
@@ -11,6 +12,9 @@
   --color-primary:rgb(112, 193, 244);
   --color-font-white-transparent:rgba(255, 255, 255, 0.87);
 
+  --scrollbar-background-color:rgba(128, 128, 128, 0.484);
+  --scrollbar-color:var(--color-primary);
+
   --letter-spacing-xsmall: 0.02rem;
   --letter-spacing-small: 0.04rem;
   --letter-spacing-medium: 0.06rem;
@@ -21,8 +25,14 @@
   --transition-short:0.5s;
   --transition-medium:1s;
 
-  --orbit-width:13rem;
+  --border-radius-small:4px;
+
+  --orbit-width:12rem;
+
+  --planet-rotate-speed:30s;
+  --planet-rotate-speed-slow:100s;
 }
+
 * {
   margin:0;
   padding:0;
@@ -50,3 +60,4 @@ button,input,textarea {
   font-size: var(--font-size-small);
   letter-spacing: var(--letter-spacing-small);
 }
+

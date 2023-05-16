@@ -176,7 +176,7 @@
     height: 100%;
     top:0;
     left:0;
-    filter: brightness(200%);
+    filter: brightness(100%);
     object-fit: cover;
   }
   .background-image {
