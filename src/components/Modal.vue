@@ -1,11 +1,11 @@
 <script  lang="ts">
 import { PropType } from 'vue';
-import { planetSummary } from '../data/types';
+import type { Planet } from '../data/types';
 
 	export default {
 		props: {
 			planet: {
-				type: Object as PropType<planetSummary>,
+				type: Object as PropType<Planet>,
 				required: true,
 			},
 		},
@@ -14,24 +14,42 @@ import { planetSummary } from '../data/types';
 			const closePlanetDetails = () => {
 				context.emit('closePlanetDetails', null)
 			}
-			return {closePlanetDetails, planet}
+			function dontAnimateSaturn () {
+				if (planet.name === 'saturn') {
+					let imgEl = document.querySelector('.img') as HTMLImageElement
+					imgEl.style.animation = 'none';
+				}
+			}
+			function test () {
+				alert()
+			}
+			return {closePlanetDetails, planet,dontAnimateSaturn,test}
+		},
+		mounted() {
+			this.dontAnimateSaturn()
 		}
 	}
 </script>
 
 <template>
-	<div class="modal-container">
-		<div class="modal">
-			<div><h1>{{planet['name']}}</h1></div>
-			<!-- <div><h1>{{planet.name}}</h1></div> -->
-			<p v-for="stat in planet.stats" class="planet-stats">
-				<p>{{stat.label}} {{stat.value}}</p>
-			</p>
-			<div class="description"><p>{{planet.synopsis}}</p></div>
-			<div class="description"><p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae veritatis consectetur consequuntur velit. Expedita minima magni sunt praesentium non officia voluptas labore dolores quasi reprehenderit ea animi esse sapiente repellendus sequi, ipsam, doloribus ratione quo aut excepturi nulla. Quasi quam error aspernatur doloribus dolore sed! Deserunt nesciunt nulla consequuntur temporibus quo rerum quia eius aliquam, esse, dolores et vero unde non placeat consequatur atque voluptates animi, dolorum dolorem dicta laboriosam voluptatum itaque? Aspernatur facere delectus nihil illum qui maiores, quae sed, in reprehenderit tenetur natus sit explicabo fuga quaerat non vel necessitatibus modi. Autem dolorum tenetur tempore sint eveniet laudantium!</p></div>
-			<div class="img-container"><img src="@/assets/planets/mars-img.jpg" alt=""></div>
-			<button @click="closePlanetDetails()">Close</button>
-		</div>
+	<div class="modal-container" @click="closePlanetDetails()" >
+			<div class="modal">
+				<button class="btn-close" @click="closePlanetDetails()">X</button>
+				<div><h1>{{planet.name}}</h1></div>
+				<div class="intro">
+					<img class="img" :src="planet.imageUrl" alt="" srcset="">
+					<div class="stats">
+						<div v-for="stat in planet.stats" class="planet-stats">
+							<div class="stat-label">{{stat.label}}: </div><div>{{stat.value}}</div>
+						</div>
+						<div v-for="stat in planet.statsExtra" class="planet-stats">
+							<div class="stat-label">{{stat.label}}: </div><div>{{stat.value}}</div>
+						</div>
+					</div>
+				</div>
+				<div class="description"><p>{{planet.descriptionLong}}</p></div>
+				<div class="img-container"><img src="@/assets/planets/mars-img.jpg" alt=""></div>
+			</div>
 	</div>
 </template>
 
@@ -41,30 +59,84 @@ import { planetSummary } from '../data/types';
 	z-index:2;
 	width:100%;
 	height:100%;
-	background: rgba(0,0,0,0.25);
+	background: rgba(0, 0, 0, 0.5);
+	flex-grow:0 !important;
+	display: flex;
+	flex-direction: column;
 	.modal {
-		width:40rem;
-		height:40rem;
+		border-radius:var(--border-radius-medium);
+		background: rgba(2, 19, 31, 0.9);
+		height:clamp(20rem, 90%, 74rem);
+		width:clamp(20rem, 50rem, 50rem);
+		padding:2.5rem;
 		position: absolute;
 		top:50%;
 		left:50%;
 		transform:translate(-50%,-50%);
-		background: rgba(0,0,0,0.8);
 		display:flex;
+		flex-grow:0;
 		flex-direction: column;
+		gap:2.5rem;
 		overflow-y:auto;
-		> div {
-			margin:1rem auto;
+		.btn-close {
+			position: absolute;
+			top:1px;
+			left:1px;
+			color:rgba(255, 255, 255, 0.83);
+			border:2px solid rgba(255, 255, 255, 0.252);
+			font-size: 1.1rem;
+			&:hover {
+				color:white;
+				border:2px solid rgba(255, 255, 255, 0.812);
+			}
+		}
+		h1 {
+			margin:1rem;
+			text-align: center;
+			text-transform: capitalize;
+		}
+		.intro {
+			width:100%;
+			justify-content: space-around;
+			display: flex;
+			flex:1;
+			flex-grow:0;
+			img {
+				width:18rem;
+				margin:auto 0;
+				animation: rotate linear infinite var(--planet-rotate-speed-slow);
+			}
+			.stats {
+				padding-right:2rem;
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+				gap:0.1rem;
+				.planet-stats {
+					display:flex;
+					gap:0.5rem;
+					.stat-label {
+						width:3rem;
+						text-align: right;
+					}
+				}
+			}
+		}
+		.description {
+			letter-spacing: var(--letter-spacing-small);
 		}
 		.img-container {
 			margin:0;
 			width:100%;
-			height:35rem;
 			img {
 				width:100%;
 				height:100%;
 				object-fit: cover;
+				border-radius: var(--border-radius-small);
 			}
+		}
+		@media screen and (max-width:770px) {
+			width:90%;
 		}
 	}
 }

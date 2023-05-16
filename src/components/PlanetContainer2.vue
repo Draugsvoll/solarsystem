@@ -10,7 +10,7 @@
 	const showingRealSizePlanet = ref(false)
 
 	const dayCounter = ref(0)
-	const daysPerSecond = ref(25)
+	const daysPerSecond = ref(10)
 	const brightness = ref(100)
 	const showOrbits = ref(true)
 	const showDays = ref(true)
@@ -122,6 +122,7 @@
 		if (!image) return
 		image.style.width = planetWidthReal
 		image.classList.add('planet-rotate-slow')
+		image.classList.add('brightness-low')
 		parentNode?.classList.add('planet-real-size')
 		earthImg?.classList.add('pause-animation')
 		earthEl?.classList.add('center-earth-freeze')
@@ -131,7 +132,7 @@
 
 	function openPlanetDetails (id: string) {
 		planetInModal.value = planets.find(planet => {
-			return planet.name = id
+			return planet.name === id
 		})
 	}
 
@@ -180,11 +181,11 @@
 		</div>
 		<div class="range-container">
 			<div>
-				<span class="label-range-input-stars">Stars</span>
+				<span>Stars</span>
 				<input type="range" v-model="brightness" @input="adjustBrightness()" min="50" max="500" step="10">
 			</div>
 			<div>
-				<span class="label-range-input-stars" >Days-per-second: {{daysPerSecond}}</span>
+				<span>{{daysPerSecond}} days/sec</span>
 				<input type="range" v-model="daysPerSecond" min="1" max="365" step="1">
 			</div>
 		</div>
@@ -194,7 +195,9 @@
 		</div>
 	</div>
 
-	<Modal :planet="planetInModal" v-if="planetInModal" @closePlanetDetails="closeModal()" />
+	<transition name="fade">
+		<Modal :planet="planetInModal" v-if="planetInModal" @closePlanetDetails="closeModal()" />
+	</transition>
 	
 	
 	<div class="planet-container-2"  @wheel="handleMouseScroll">
@@ -208,11 +211,11 @@
 		</div>
 		<p v-if="showDays" class="day-counter">Day: {{Math.floor(dayCounter).toLocaleString()}}</p>
 
-		<div 
-			v-for="planet, index in planets" :id="planet.name"
+		<div v-for="planet, index in planets" :id="planet.name"
 			:class="'planet planet'+(index+1)"
 			:style="
-				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'">
+				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'"
+			>
 			<img :id="'img-'+planet.name" class="img-planet" :src="planet.imageUrl" alt="" srcset="">
 			<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
 			<div class="planet-info">
@@ -223,7 +226,7 @@
 					</p>
 				</div>
 				<p class="planet-infotext">{{planet.synopsis}}</p>
-				<div>
+				<div class="btn-row">
 					<button v-if="!showingRealSizePlanet && planet.name !== 'earth'" @click="displayPlanetRealSize(planet.name)">Real size</button>
 					<button v-else-if="showingRealSizePlanet" @click="displayPlanetsFakeSize()">Reset size</button>
 					<button @click="openPlanetDetails(planet.name)">Details</button>
@@ -236,6 +239,17 @@
 
 
 <style lang="scss" scoped>
+.fade-enter-active {
+	transition: transform 0.7s;
+  }
+  .fade-leave-active {
+	transition: transform 0.7s;
+  }
+  .fade-enter-from,
+  .fade-leave-to {
+	transform: scale(0);
+  }
+
 .planet-container-2 {
 	z-index:1;
 	position:absolute;
@@ -243,13 +257,13 @@
 	height:100%;
 	.day-counter {
 		position:absolute;
-		top:57%;
+		top:56.8%;
 		left:50%;
 		transform: translate(-50%, -50%);
 		background:rgba(0,0,0,0.2);
 		padding:0.25rem 0.5rem;
 		border-radius: 5px;
-		z-index:15;
+		z-index:13;
 		user-select: none;
 		min-width:5rem;
 		text-align: center;
@@ -281,7 +295,7 @@
 		left:50%;
 		.orbit {
 		  position: absolute;
-		  border:1px solid rgba(255, 255, 255, 0.32);
+		  border:1px solid rgba(255, 255, 255, 0.24);
 		  border-radius: 100%;
 		  transform: translate(-50%, -50%);
 		}
@@ -332,7 +346,9 @@
 	  user-select: none;
 	  &:hover {
 		animation-play-state: paused !important;
-		filter:brightness(115%);
+		img {
+			filter:brightness(1.15);
+		}
 		.planet-info {
 		  display: flex;
 		  flex-direction: column;
@@ -340,13 +356,24 @@
 		  pointer-events: all;
 		}
 	  }
+	#img-saturn {
+		animation:none !important;
+		padding-top:0.8rem;
+	}
+	#img-uranus {
+	}
+	#venus {
+		.planet-label {
+			margin-top:-0.4rem !important;
+		}
+	}
 	  .planet-info {
 		transition: all var(--transition-short); ;
 		opacity:0;
 		position: absolute;
-		bottom:90%;
+		bottom:80%;
 		left:50%;
-		background: rgba(13, 16, 17, 0.5);
+		background: rgba(13, 16, 17, 0.2);
 		border-top-right-radius:var(--border-radius-small);
 		border-bottom-right-radius:var(--border-radius-small);
 		border-left:1px solid rgba(135, 206, 250, 0.85);
@@ -355,7 +382,7 @@
 		display: flex;
 		flex-direction: column;
 		pointer-events: none;
-		gap:1rem;
+		gap:0.8rem;
 		.planet-name {
 		  color:var(--color-primary);
 		  text-align: left;
@@ -373,6 +400,7 @@
 		text-align: center;
 	  }
 	  img {
+		filter:brightness(0.95);
 		animation: rotate var(--planet-rotate-speed) linear infinite reverse;
 		transition: 0.9s all;
 		border-radius: 100%;
@@ -381,6 +409,14 @@
 		width:4.2rem;
 		user-drag: none;
 	   -webkit-user-drag: none; /* For Safari */
+	  }
+	  .btn-row {
+		display:flex;
+		flex-direction: column;
+		gap:0.5rem;
+		button {
+			width:10rem;
+		}
 	  }
 	}
 }
@@ -391,7 +427,6 @@
 	animation-play-state: paused !important;
   }
   .planet-real-size {
-	filter:brightness(92%) !important;
 	animation-play-state: paused !important;
 	top:50% !important;
 	left:50% !important;
@@ -402,12 +437,19 @@
 		left:55% !important;
 		height:fit-content;
 		gap:2rem !important;
+		z-index:999 !important;
 	}
 	&:hover {
-		filter:brightness(92%);
+		img {
+			filter:brightness(0.6);
+		}
 		.planet-info {
 			gap:2rem !important;
+			z-index:999 !important;
 		}
+	}
+	img {
+		filter:brightness(0.8);
 	}
 }
   .planet-rotate-slow {
@@ -461,9 +503,5 @@
 	  accent-color: var(--color-primary);
 	}
   }
-#img-saturn {
-	animation:none !important;
-	padding-top:0.8rem;
-}
 
 </style>
