@@ -6,17 +6,17 @@ import { ref } from 'vue'
 			const brightness = ref(200)
 			const daysPerSecond = ref(5)
 
-			const toggleOrbit = (isChecked: boolean) => {
-				context.emit('toggleOrbit', isChecked)
+			const toggleOrbit = (isChecked: HTMLInputElement) => {
+				context.emit('toggleOrbit', isChecked?.checked)
 			}
-			const toggleLabels = (isChecked: boolean) => {
-				context.emit('toggleLabels', isChecked)
+			const toggleLabels = (isChecked: HTMLInputElement) => {
+				context.emit('toggleLabels', isChecked?.checked)
 			}
-			const toggleSun = (isChecked: boolean) => {
-				context.emit('toggleSun', isChecked)
+			const toggleSun = (isChecked: HTMLInputElement) => {
+				context.emit('toggleSun', isChecked?.checked)
 			}
-			const toggleAnimate = (isChecked: boolean) => {
-				context.emit('toggleAnimate', isChecked)
+			const toggleAnimate = (isChecked: HTMLInputElement) => {
+				context.emit('toggleAnimate', isChecked?.checked)
 			}
 			const adjustDaysPerSecond = (days: any) => {
 				daysPerSecond.value = days
@@ -39,19 +39,19 @@ import { ref } from 'vue'
 			element.msRequestFullscreen();
 			}
 		}
-		function exitFullscreen () {
-			if (document.exitFullscreen) {
-			document.exitFullscreen();
-			} else if (document.mozCancelFullScreen) { // For Firefox
-			document.mozCancelFullScreen();
-			} else if (document.webkitExitFullscreen) { // For Chrome, Safari, and Opera
-			document.webkitExitFullscreen();
-			} else if (document.msExitFullscreen) { // For Internet Explorer and Edge
-			document.msExitFullscreen();
-			}
-		}
+		// function exitFullscreen () {
+		// 	if (document.exitFullscreen) {
+		// 	document.exitFullscreen();
+		// 	} else if (document.mozCancelFullScreen) { // For Firefox
+		// 	document.mozCancelFullScreen();
+		// 	} else if (document.webkitExitFullscreen) { // For Chrome, Safari, and Opera
+		// 	document.webkitExitFullscreen();
+		// 	} else if (document.msExitFullscreen) { // For Internet Explorer and Edge
+		// 	document.msExitFullscreen();
+		// 	}
+		// }
 
-			return {toggleOrbit, toggleLabels, toggleSun, toggleAnimate, adjustBrightness, brightness, fullscreen, exitFullscreen,adjustDaysPerSecond,daysPerSecond}
+			return {toggleOrbit, toggleLabels, toggleSun, toggleAnimate, adjustBrightness, brightness,adjustDaysPerSecond,daysPerSecond,fullscreen}
 		},
 		mounted() {
 			this.adjustDaysPerSecond(this.daysPerSecond)
@@ -62,27 +62,27 @@ import { ref } from 'vue'
 <template>
 	<div class="sidebar">
 		<div>
-		  <h3>Planet Explorer</h3>
+		  <h2>Planet Explorer</h2>
 		</div>
 		<div>
 		  <p class="notify-scrolling">Scroll to zoom</p>
 		</div>
 		<div>
-			<span class="setting-label">Orbits</span><input type="checkbox" checked @input="toggleOrbit($event.target.checked)"><br>
-			<span class="setting-label">Labels</span><input type="checkbox" checked @input="toggleLabels($event.target.checked)"><br>
-			<span class="setting-label">Sun</span><input type="checkbox" checked @input="toggleSun($event.target.checked)"><br>
-			<span class="setting-label">Animation</span><input type="checkbox" checked @input="toggleAnimate($event.target.checked)"><br>
+			<span class="setting-label">Orbits</span><input type="checkbox" checked @input="toggleOrbit($event.target as HTMLInputElement)"><br>
+			<span class="setting-label">Labels</span><input type="checkbox" checked @input="toggleLabels($event.target as HTMLInputElement)"><br>
+			<span class="setting-label">Sun</span><input type="checkbox" checked @input="toggleSun($event.target as HTMLInputElement)"><br>
+			<span class="setting-label">Animation</span><input type="checkbox" checked @input="toggleAnimate($event.target as HTMLInputElement)"><br>
 		</div>
 		<div class="range-container">
 			<span class="label-range-input">Stars</span>
 			<input type="range" v-model="brightness" @input="adjustBrightness()" min="50" max="500" step="10">
 
 			<span class="label-range-input">{{daysPerSecond}} days/sec</span>
-			<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target.value)" min="1" max="365" step="1">
+			<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target?.value)" min="1" max="365" step="1">
 		</div>
 		<div class="btn-row">
 		  <button @click="fullscreen()">Fullscreen</button>
-		  <button @click="exitFullscreen()">Normal screen</button>
+		  <!-- <button @click="exitFullscreen()">Normal screen</button> -->
 		</div>
 	</div>
 </template>

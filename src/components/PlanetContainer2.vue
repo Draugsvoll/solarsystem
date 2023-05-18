@@ -5,9 +5,9 @@
     import type { Planet } from '../data/types';
 	import Sidebar from './Sidebar.vue'
 
-	const scaleableEls = ref(<HTMLElement|null>null)
-	const planetInModal = ref(<undefined|Planet>undefined)
-	const planetsEl = ref(<undefined|HTMLElement[]>undefined)
+	const planetContainerEl = ref<HTMLElement|undefined>(undefined)
+	const planetInModal = ref<undefined|Planet>(undefined)
+	const planetsEl = ref<undefined|HTMLElement[]>(undefined)
 	const showingRealSizePlanet = ref(false)
 
 	const dayCounter = ref(0)
@@ -36,8 +36,8 @@
 			if (currentScaling.value < 20) return
 			currentScaling.value -= 5
 		}
-		if (scaleableEls.value?.style.transform !== undefined) {
-			scaleableEls.value.style.transform = `scale(${currentScaling.value / 100})`;
+		if (planetContainerEl.value?.style.transform !== undefined) {
+			planetContainerEl.value.style.transform = `scale(${currentScaling.value / 100})`;
 		}
 	}
 
@@ -139,7 +139,7 @@
 	}
 
 	function fetchElements () {
-		scaleableEls.value = document.querySelector(".planet-container-2") as HTMLElement
+		planetContainerEl.value = document.querySelector(".planet-container-2") as HTMLElement
 		planetsEl.value = document.querySelectorAll(".planet") as unknown as HTMLElement[];
 	}
 
