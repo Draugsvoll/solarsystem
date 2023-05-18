@@ -6,6 +6,8 @@ export type Planet = {
 	synopsis: string
 	descriptionLong: string
 	imageUrl: string
+	sizeToEarth: number
+	sizeToEarthAdjusted: number
 }
 
 type stat = {

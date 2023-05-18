@@ -20,10 +20,7 @@ import type { Planet } from '../data/types';
 					imgEl.style.animation = 'none';
 				}
 			}
-			function test () {
-				alert()
-			}
-			return {closePlanetDetails, planet,dontAnimateSaturn,test}
+			return {closePlanetDetails, planet,dontAnimateSaturn,}
 		},
 		mounted() {
 			this.dontAnimateSaturn()
@@ -33,7 +30,7 @@ import type { Planet } from '../data/types';
 
 <template>
 	<div class="modal-container" @click="closePlanetDetails()" >
-			<div class="modal">
+			<div class="modal" @click.stop="">
 				<button class="btn-close" @click="closePlanetDetails()">X</button>
 				<div><h1>{{planet.name}}</h1></div>
 				<div class="intro">
@@ -48,7 +45,7 @@ import type { Planet } from '../data/types';
 					</div>
 				</div>
 				<div class="description"><p>{{planet.descriptionLong}}</p></div>
-				<div class="img-container"><img src="@/assets/planets/mars-img.jpg" alt=""></div>
+				<div class="img-container"><img :src="`src/assets/planets/${planet.name}-img.jpg`" alt=""></div>
 			</div>
 	</div>
 </template>
@@ -60,15 +57,18 @@ import type { Planet } from '../data/types';
 	width:100%;
 	height:100%;
 	background: rgba(0, 0, 0, 0.5);
+	background: rgba(0, 8, 14, 0.6);
 	flex-grow:0 !important;
 	display: flex;
 	flex-direction: column;
 	.modal {
+		overflow-x:hidden;
+		z-index:99;
 		border-radius:var(--border-radius-medium);
-		background: rgba(2, 19, 31, 0.9);
-		height:clamp(20rem, 90%, 74rem);
-		width:clamp(20rem, 50rem, 50rem);
-		padding:2.5rem;
+		background: var(--color-background);
+		height:clamp(20rem, 95%, 74rem);
+		width:clamp(20rem, 60rem, 90%);
+		padding:3.5rem;
 		position: absolute;
 		top:50%;
 		left:50%;
@@ -96,13 +96,16 @@ import type { Planet } from '../data/types';
 			text-transform: capitalize;
 		}
 		.intro {
+			max-width: 50rem;
+			margin:auto;
 			width:100%;
 			justify-content: space-around;
 			display: flex;
+			flex-wrap: wrap;
 			flex:1;
 			flex-grow:0;
 			img {
-				width:18rem;
+				width:22rem;
 				margin:auto 0;
 				animation: rotate linear infinite var(--planet-rotate-speed-slow);
 			}
@@ -115,28 +118,34 @@ import type { Planet } from '../data/types';
 				.planet-stats {
 					display:flex;
 					gap:0.5rem;
+					line-height: var(--line-height-large);
 					.stat-label {
-						width:3rem;
+						width:8rem;
+						margin-right:0.3rem;
+						text-transform: capitalize;
 						text-align: right;
+						font-weight: 600;
 					}
 				}
 			}
 		}
 		.description {
 			letter-spacing: var(--letter-spacing-small);
+			line-height: var(--line-height-medium);
+			max-width: 50rem;
+			margin:auto;
 		}
 		.img-container {
-			margin:0;
+			max-width: 50rem;
+			margin:auto;
+			display:block;
 			width:100%;
 			img {
 				width:100%;
 				height:100%;
 				object-fit: cover;
-				border-radius: var(--border-radius-small);
+				border-radius: var(--border-radius-medium);
 			}
-		}
-		@media screen and (max-width:770px) {
-			width:90%;
 		}
 	}
 }

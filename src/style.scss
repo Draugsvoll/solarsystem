@@ -10,8 +10,11 @@
 
   --line-height-small:1.15rem;
   --line-height-medium:1.25rem;
+  --line-height-large:1.5rem;
 
   --color-primary:rgb(112, 193, 244);
+  --color-background:rgba(2, 19, 31, 0.9);
+  --color-background-lower-alpha:rgba(2, 19, 31, 0.75);
   --color-font-white-transparent:rgba(255, 255, 255, 0.87);
 
   --scrollbar-color-thumb:rgba(24, 46, 87, 0.95);
@@ -24,11 +27,13 @@
   --font-size-xsmall: 0.80rem;
   --font-size-small: 0.93rem;
 
-  --transition-short:0.5s;
+  --transition-xshort:0.25s;
+  --transition-short:0.65s;
   --transition-medium:1s;
 
   --border-radius-small:4px;
   --border-radius-medium:7px;
+  --border-radius-large:11px;
 
   --orbit-width:12rem;
 
@@ -61,11 +66,16 @@ html {
   margin:0;
   padding:0;
   box-sizing: border-box;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+
 }
 
 h1,h2,h3,h4,h5,h6 {
   font-weight: 300;
   letter-spacing: var(--letter-spacing-small);
+}
+h1 {
+  font-size: 2.5rem;
 }
 
 button {
@@ -77,12 +87,13 @@ button {
   transition: border-color 0.25s;
   cursor: pointer;
   transition: all var(--transition-short);
+  font-weight: 600;
+  letter-spacing: var(--letter-spacing-xsmall);
+  font-size: 0.85rem;
 }
 button:hover {
   background:rgba(1, 17, 27, 0.85);
+  color:var(--color-primary);
 }
-button,input,textarea {
-  font-size: var(--font-size-small);
-  letter-spacing: var(--letter-spacing-small);
-}
+
 
