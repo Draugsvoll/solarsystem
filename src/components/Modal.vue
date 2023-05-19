@@ -11,18 +11,31 @@ import type { Planet } from '../data/types';
 		},
 		setup(props, context, ) {
 			const planet = props.planet
+
 			const closePlanetDetails = () => {
 				context.emit('closePlanetDetails', null)
 			}
+
 			function dontAnimateSaturn () {
 				if (planet.name === 'saturn') {
 					let imgEl = document.querySelector('.img') as HTMLImageElement
 					imgEl.style.animation = 'none';
 				}
 			}
-			return {closePlanetDetails, planet,dontAnimateSaturn,}
+
+			function setupImages () {
+				// need this function because of stupid vite v-bind issues
+				let planetImg = document.getElementById('planet-img') as HTMLImageElement
+				let descriptionImg = document.getElementById('description-img') as HTMLImageElement
+				
+				planetImg.src = new URL(`../assets/${planet.name}.png`, import.meta.url).href
+				descriptionImg.src = new URL(`../assets/planets/${planet.name}-img.jpg`, import.meta.url).href
+			}
+
+			return {closePlanetDetails, planet,dontAnimateSaturn,setupImages}
 		},
 		mounted() {
+			this.setupImages()
 			this.dontAnimateSaturn()
 		}
 	}
@@ -34,7 +47,7 @@ import type { Planet } from '../data/types';
 				<button class="btn-close" @click="closePlanetDetails()">X</button>
 				<div><h1>{{planet.name}}</h1></div>
 				<div class="intro">
-					<img class="img" :src="planet.imageUrl" alt="" srcset="">
+					<img id="planet-img" class="img" alt="" srcset="">
 					<div class="stats">
 						<div v-for="stat in planet.stats" class="planet-stats">
 							<div class="stat-label">{{stat.label}}: </div><div>{{stat.value}}</div>
@@ -45,7 +58,7 @@ import type { Planet } from '../data/types';
 					</div>
 				</div>
 				<div class="description"><p>{{planet.descriptionLong}}</p></div>
-				<div class="img-container"><img :src="`src/assets/planets/${planet.name}-img.jpg`" alt=""></div>
+				<div class="img-container"><img id="description-img" alt=""></div>
 			</div>
 	</div>
 </template>

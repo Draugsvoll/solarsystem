@@ -19,7 +19,7 @@
 	const showLabels = ref(true)
 	const showSun = ref(true)
 	const currentScaling = ref(100)
-	
+
 	function handleMouseScroll(event: WheelEvent) {
 		const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1
 		if (!event.ctrlKey || !event.metaKey) {
@@ -131,10 +131,12 @@
 		planetInModal.value = undefined
 	}
 
-	function setPlanetImageWidth () {
-		let images = document.querySelectorAll(".img-planet") as NodeListOf<HTMLElement>;
-		images.forEach(image => {
-			image.style.width = planetWidthFake+'rem'
+	function setupPlanetImages () {
+		// need this function because of stupid vite v-bind issues
+		planets.forEach(planet => {
+			let planetImage = document.getElementById(`img-${planet.name}`) as HTMLImageElement
+			planetImage.src = new URL(`../assets/${planet.name}.png`, import.meta.url).href
+			planetImage.style.width = planetWidthFake+'rem'
 		})
 	}
 
@@ -144,8 +146,8 @@
 	}
 
 	onMounted(() => {
-		setPlanetImageWidth()
 		fetchElements()
+		setupPlanetImages()
 
 		setInterval(() => {
 			if (playAnimation.value === true) {
@@ -188,7 +190,7 @@
 				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'"
 			>
 			<!-- <p class="size-in-earths">{{planet.sizeToEarth}} earths</p> -->
-			<img :id="'img-'+planet.name" class="img-planet" :src="planet.imageUrl" alt="" srcset="">
+			<img :id="'img-'+planet.name" class="img-planet"  alt="" srcset="">
 			<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
 			<div class="planet-info">
 				<h3 class="planet-name">{{planet.name}}</h3>
