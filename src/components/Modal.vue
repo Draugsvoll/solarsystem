@@ -50,10 +50,10 @@ import type { Planet } from '../data/types';
 					<img id="planet-img" class="img" alt="" srcset="">
 					<div class="stats">
 						<div v-for="stat in planet.stats" class="planet-stats">
-							<div class="stat-label">{{stat.label}}: </div><div>{{stat.value}}</div>
+							<div class="stat-label">{{stat.label}}: </div><div class="stat-value">{{stat.value}}</div>
 						</div>
 						<div v-for="stat in planet.statsExtra" class="planet-stats">
-							<div class="stat-label">{{stat.label}}: </div><div>{{stat.value}}</div>
+							<div class="stat-label">{{stat.label}}: </div><div class="stat-value">{{stat.value}}</div>
 						</div>
 					</div>
 				</div>
@@ -133,11 +133,18 @@ import type { Planet } from '../data/types';
 					gap:0.5rem;
 					line-height: var(--line-height-large);
 					.stat-label {
-						width:8rem;
+						width:9rem;
 						margin-right:0.3rem;
-						text-transform: capitalize;
 						text-align: right;
 						font-weight: 600;
+						&::first-letter {
+							text-transform: capitalize;
+						}
+					}
+					.stat-value {
+						&::first-letter {
+							text-transform: capitalize;
+						}
 					}
 				}
 			}

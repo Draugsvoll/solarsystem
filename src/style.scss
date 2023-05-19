@@ -14,18 +14,20 @@
 
   --color-primary:rgb(112, 193, 244);
   --color-background:rgba(2, 19, 31, 0.9);
-  --color-background-lower-alpha:rgba(2, 19, 31, 0.75);
+  --color-background-lower-alpha:rgba(2, 19, 31, 0.8);
   --color-font-white-transparent:rgba(255, 255, 255, 0.87);
 
-  --scrollbar-color-thumb:rgba(24, 46, 87, 0.95);
-  --scrollbar-color-thumb-hover:rgba(30, 55, 102, 0.95);
+  --scrollbar-color-thumb:rgba(33, 47, 73, 0.95);
+  --scrollbar-color-thumb-hover:rgba(46, 61, 91, 0.95);
 
   --letter-spacing-xsmall: 0.02rem;
   --letter-spacing-small: 0.04rem;
   --letter-spacing-medium: 0.06rem;
 
-  --font-size-xsmall: 0.80rem;
-  --font-size-small: 0.93rem;
+  --font-size-xxsmall: 0.80rem;
+  --font-size-xsmall: 0.85rem;
+  --font-size-small: 0.95rem;
+  --font-size-medium: 1.05rem;
 
   --transition-xshort:0.25s;
   --transition-short:0.65s;
@@ -39,6 +41,16 @@
 
   --planet-rotate-speed:30s;
   --planet-rotate-speed-slow:88s;
+
+  @media screen and (min-width: 1900px) {
+    font-size: 17px;
+  }
+  @media screen and (min-width: 2150px) {
+    font-size: 18px;
+  }
+  @media screen and (min-width: 2500px) {
+    font-size: 19px;
+  }
 }
 html {
   ::-webkit-scrollbar {
@@ -89,7 +101,7 @@ button {
   transition: all var(--transition-short);
   font-weight: 600;
   letter-spacing: var(--letter-spacing-xsmall);
-  font-size: 0.85rem;
+  font-size: var(--font-size-xsmall);
 }
 button:hover {
   background:rgba(1, 17, 27, 0.85);

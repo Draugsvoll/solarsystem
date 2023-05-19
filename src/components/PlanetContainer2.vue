@@ -19,6 +19,15 @@
 	const showLabels = ref(true)
 	const showSun = ref(true)
 	const currentScaling = ref(100)
+	const planetImgLoadedCounter = ref(0)
+	const isLoading = ref(true)
+
+	function planetImgIsLoaded() {
+		planetImgLoadedCounter.value++
+		if (planetImgLoadedCounter.value === planetsEl.value?.length) {
+			isLoading.value = false
+		}
+	}
 
 	function handleMouseScroll(event: WheelEvent) {
 		const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1
@@ -158,6 +167,11 @@
 </script>
 
 <template>
+	<div v-if="isLoading"  id="loader" class="loader">
+		<div class="spinner" id="spinner"></div>
+		<!-- <p class="loading-text">Loading AI..</p> -->
+	</div>
+
 	<Sidebar
 		@toggleAnimate="toggleAnimation"	
 		@toggleOrbit="toggleOrbit"
@@ -190,7 +204,7 @@
 				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'"
 			>
 			<!-- <p class="size-in-earths">{{planet.sizeToEarth}} earths</p> -->
-			<img :id="'img-'+planet.name" class="img-planet"  alt="" srcset="">
+			<img @load="planetImgIsLoaded()" :id="'img-'+planet.name" class="img-planet"  alt="" srcset="">
 			<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
 			<div class="planet-info">
 				<h3 class="planet-name">{{planet.name}}</h3>
@@ -212,13 +226,6 @@
 	</div>
 </template>
 <style lang="scss" scoped>
-.fade-enter-active, .fade-leave-active {
-	transition: all var(--transition-short) ease-in-out;
-  }
-  .fade-leave-to,.fade-enter-from {
-	transform: scale(10);
-	opacity:0;
-  }
   .planet-container-2 {
 	z-index:1;
 	position:absolute;
@@ -226,16 +233,18 @@
 	height:100%;
 	.day-counter {
 		position:absolute;
-		top:56.8%;
+		top:calc(50% + 3.1rem);
 		left:50%;
 		transform: translate(-50%, -50%);
-		background:rgba(0,0,0,0.2);
+		background:rgba(0,0,0,0.15);
 		padding:0.25rem 0.5rem;
 		border-radius: 5px;
 		z-index:13;
 		user-select: none;
 		min-width:5rem;
 		text-align: center;
+		letter-spacing: var(--letter-spacing-medium);
+		font-size: var(--font-size-small);
 	}
 	.sun {
 		position: absolute;
@@ -265,7 +274,7 @@
 		left:50%;
 		.orbit {
 		  position: absolute;
-		  border:1px solid rgba(255, 255, 255, 0.20);
+		  border:1px solid rgba(255, 255, 255, 0.16);
 		  border-radius: 100%;
 		  transform: translate(-50%, -50%);
 		}
@@ -334,8 +343,6 @@
 		animation:none !important;
 		padding-top:0.8rem;
 	}
-	#img-uranus {
-	}
 	#venus {
 		.planet-label {
 			margin-top:-0.4rem !important;
@@ -350,7 +357,7 @@
 		background: var(--color-background-lower-alpha);
 		border-top-right-radius:var(--border-radius-medium);
 		border-bottom-right-radius:var(--border-radius-medium);
-		border-left:1px solid rgba(135, 206, 250, 0.85);
+		border-left:1px solid rgba(135, 206, 250, 0.9);
 		padding:1.5rem 1.25rem;
 		width:16rem;
 		display: flex;
@@ -377,11 +384,12 @@
 		}
 	  }
 	  .planet-label {
-		font-size: 0.85rem;
 		text-transform: capitalize;
 		letter-spacing: var(--letter-spacing-medium);
-		color:rgba(255, 255, 255, 0.80);
+		color:rgba(255, 255, 255, 0.732);
 		text-align: center;
+		font-weight: 600;
+		font-size: var(--font-size-xxsmall);
 	  }
 	  img {
 		filter:brightness(0.95);
@@ -425,7 +433,7 @@
 		left:50%;
 		transform: translate(-55%, -300%);
 		z-index:20;
-		font-size: 0.85rem;
+		font-size: var(--font-size-xsmall);
 		letter-spacing: var(--letter-spacing-small);
 	}
 	.planet-info {
@@ -453,46 +461,11 @@
 	z-index:99 !important;
 	pointer-events: none;
   }
-  .sidebar {
-	padding:0.7rem;
-	z-index:2;
-	position: absolute;
-	width:fit-content;
-	left:0;
-	display:flex;
-	flex-direction: column;
-	gap:1rem;
-	h1,h2,h3 {
-	  color:var(--color-primary);
-	  margin:0;
-	}
-	.setting-label {
-	  display:inline-block;
-	  width:4.5rem;
-	}
-	.range-container {
-		display:flex;
-		flex-direction: column;
-		gap:1rem;
-		justify-content: space-between;
-		input[type="range"] {
-		  margin-top:0;
-		  width: 8rem;
-		  height: 0.6rem;
-		  border-radius: 5px;
-		  display:block;
-		  accent-color: var(--color-primary);
-		}
-		div > span {
-			margin-bottom:0.35rem;
-			display:block;
-		}
-	}
-	input[type="checkbox"] {
-	  width:1rem;
-	  height:1rem;
-	  accent-color: var(--color-primary);
-	}
+  .fade-enter-active, .fade-leave-active {
+	transition: all var(--transition-short) ease-in-out;
   }
-
+  .fade-leave-to,.fade-enter-from {
+	transform: scale(10);
+	opacity:0;
+  }
 </style>

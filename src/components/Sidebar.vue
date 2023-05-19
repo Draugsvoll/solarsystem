@@ -79,24 +79,30 @@ import { ref } from 'vue'
 
 			<span class="label-range-input">{{daysPerSecond}} days/sec</span>
 			<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target?.value)" min="1" max="365" step="1">
+			<p class="info-text-orbits">These are the real orbit speeds</p>
 		</div>
 		<div class="btn-row">
 		  <button @click="fullscreen()">Fullscreen</button>
 		  <!-- <button @click="exitFullscreen()">Normal screen</button> -->
+		</div>
+		<div class="copyright">
+			<p>&copy; Copyright 2023 <a target="_blank" href="https://ove-portfolio.netlify.app">Ove H. Draugsvoll</a></p>
 		</div>
 	</div>
 </template>
 
 <style lang="scss" scoped>
 .sidebar {
-	padding:0.7rem;
+	padding:0.8rem;
 	z-index:2;
-	position: absolute;
-	top:20%;
+	position: fixed;
+	left:0;
+	top:23vh;
 	width:fit-content;
 	display:flex;
+	justify-content: space-between;
 	flex-direction: column;
-	gap:1rem;
+	gap:1.2rem;
 	h1,h2,h3 {
 	  color:var(--color-primary);
 	  margin:0;
@@ -109,25 +115,41 @@ import { ref } from 'vue'
 	  display:block;
 	}
 	.range-container {	
-		input[type="range"] {
+			input[type="range"] {
 			margin-top:0;
-			margin-bottom:0.5rem;
-		  width: 8rem;
-		  height: 0.6rem;
-		  border-radius: 5px;
-		  accent-color: var(--color-primary);
+			margin-bottom:0.7rem;
+			width: 10rem;
+			height: 0.4rem;
+			border-radius: 5px;
+			accent-color: var(--color-primary);
+		}
+		.info-text-orbits {
+			font-size: var(--font-size-xxsmall);
+			color:rgba(221, 221, 221, 0.971);
+			margin-top:-0.2rem;
+			width:9rem;
 		}
 	}
 	input[type="checkbox"] {
-	  width:1rem;
-	  height:1rem;
-	  accent-color: var(--color-primary);
+		width:1rem;
+		height:1rem;
+		margin-bottom:0.3rem;
+		accent-color: var(--color-primary);
 	}
 	.btn-row {
+		margin-top:0.6rem;
 		display:flex;
 		gap:0.5rem;
 		width:fit-content;
 		justify-content: space-between;
+	}
+	.copyright {
+		font-size: 0.65rem;
+		color:rgba(160, 160, 160, 1);
+		opacity: 0.8;
+		a {
+			color:var(--color-primary);
+		}
 	}
   }
 </style>
