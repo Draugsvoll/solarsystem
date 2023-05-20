@@ -368,6 +368,8 @@
 		  color:var(--color-primary);
 		  text-align: left;
 		  text-transform: capitalize;
+		  letter-spacing: var(--letter-spacing-medium);
+		  font-size: var(--font-size-large);
 		}
 		.planet-stats {
 			display: flex;
@@ -385,8 +387,8 @@
 	  }
 	  .planet-label {
 		text-transform: capitalize;
-		letter-spacing: var(--letter-spacing-medium);
-		color:rgba(255, 255, 255, 0.732);
+		letter-spacing: var(--letter-spacing-small);
+		color:rgba(255, 255, 255, 0.7);
 		text-align: center;
 		font-weight: 600;
 		font-size: var(--font-size-xxsmall);

@@ -107,6 +107,8 @@ import type { Planet } from '../data/types';
 			margin:1rem;
 			text-align: center;
 			text-transform: capitalize;
+			font-size: 2.85rem;
+			letter-spacing: var(--letter-spacing-large);
 		}
 		.intro {
 			max-width: 50rem;
@@ -151,7 +153,7 @@ import type { Planet } from '../data/types';
 		}
 		.description {
 			letter-spacing: var(--letter-spacing-small);
-			line-height: var(--line-height-medium);
+			line-height: var(--line-height-lmedium);
 			max-width: 50rem;
 			margin:auto;
 		}

@@ -106,6 +106,7 @@ import { ref } from 'vue'
 	h1,h2,h3 {
 	  color:var(--color-primary);
 	  margin:0;
+	  letter-spacing: var(--letter-spacing-medium);
 	}
 	.setting-label {
 	  display:inline-block;
@@ -113,21 +114,23 @@ import { ref } from 'vue'
 	}
 	.label-range-input {
 	  display:block;
+	  line-height:0.9;
 	}
 	.range-container {	
 			input[type="range"] {
 			margin-top:0;
-			margin-bottom:0.7rem;
-			width: 10rem;
+			margin-bottom:0.8rem;
+			width: 10.3rem;
 			height: 0.4rem;
 			border-radius: 5px;
 			accent-color: var(--color-primary);
 		}
 		.info-text-orbits {
 			font-size: var(--font-size-xxsmall);
-			color:rgba(221, 221, 221, 0.971);
-			margin-top:-0.2rem;
+			color:rgba(221, 221, 221, 0.94);
+			margin-top:-0.1rem;
 			width:9rem;
+			line-height: 1;
 		}
 	}
 	input[type="checkbox"] {
@@ -142,6 +145,9 @@ import { ref } from 'vue'
 		gap:0.5rem;
 		width:fit-content;
 		justify-content: space-between;
+		button {
+			letter-spacing: var(--letter-spacing-small);
+		}
 	}
 	.copyright {
 		font-size: 0.65rem;
