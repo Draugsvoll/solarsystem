@@ -274,7 +274,7 @@
 		left:50%;
 		.orbit {
 		  position: absolute;
-		  border:1px solid rgba(255, 255, 255, 0.16);
+		  border:1px solid rgba(255, 255, 255, 0.20);
 		  border-radius: 100%;
 		  transform: translate(-50%, -50%);
 		}
@@ -358,12 +358,12 @@
 		border-top-right-radius:var(--border-radius-medium);
 		border-bottom-right-radius:var(--border-radius-medium);
 		border-left:1px solid rgba(135, 206, 250, 0.9);
-		padding:1.5rem 1.25rem;
-		width:16rem;
+		padding:1.5rem 1.35rem;
+		width:15.5rem;
 		display: flex;
 		flex-direction: column;
 		pointer-events: none;
-		gap:1.1rem;
+		gap:1.25rem;
 		.planet-name {
 		  color:var(--color-primary);
 		  text-align: left;
@@ -407,11 +407,11 @@
 	  .btn-row {
 		display:flex;
 		flex-direction: column;
-		gap:0.85rem;
+		gap:0.65rem;
 		position: relative;
 		button {
 			margin:0 auto;
-			width:11rem;
+			width:9.8rem;
 		}
 	  }
 	}

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 
 	export default {
 		setup(_, context) {
-			const brightness = ref(200)
+			const brightness = ref(90)
 			const daysPerSecond = ref(5)
 
 			const toggleOrbit = (isChecked: HTMLInputElement) => {
@@ -55,6 +55,7 @@ import { ref } from 'vue'
 		},
 		mounted() {
 			this.adjustDaysPerSecond(this.daysPerSecond)
+			this.adjustBrightness()
 		},
 	}
 </script>
@@ -74,12 +75,12 @@ import { ref } from 'vue'
 			<span class="setting-label">Animation</span><input type="checkbox" checked @input="toggleAnimate($event.target as HTMLInputElement)"><br>
 		</div>
 		<div class="range-container">
-			<span class="label-range-input">Stars</span>
-			<input type="range" v-model="brightness" @input="adjustBrightness()" min="50" max="500" step="10">
+			<!-- <span class="label-range-input">Brightness</span>
+			<input type="range" v-model="brightness" @input="adjustBrightness()" min="20" max="150" step="10"> -->
 
 			<span class="label-range-input">{{daysPerSecond}} days/sec</span>
 			<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target?.value)" min="1" max="365" step="1">
-			<p class="info-text-orbits">These are the real orbit speeds</p>
+			<p class="info-text-orbits">These are real orbit speeds</p>
 		</div>
 		<div class="btn-row">
 		  <button @click="fullscreen()">Fullscreen</button>
@@ -93,7 +94,9 @@ import { ref } from 'vue'
 
 <style lang="scss" scoped>
 .sidebar {
-	padding:0.8rem;
+	font-size: var(--font-size-small);
+	opacity:0.97;
+	padding:0.65rem;
 	z-index:2;
 	position: fixed;
 	left:0;
@@ -102,7 +105,7 @@ import { ref } from 'vue'
 	display:flex;
 	justify-content: space-between;
 	flex-direction: column;
-	gap:1.2rem;
+	gap:1.4rem;
 	h1,h2,h3 {
 	  color:var(--color-primary);
 	  margin:0;
@@ -128,8 +131,8 @@ import { ref } from 'vue'
 		.info-text-orbits {
 			font-size: var(--font-size-xxsmall);
 			color:rgba(221, 221, 221, 0.94);
-			margin-top:-0.1rem;
-			width:9rem;
+			margin-top:-0.22rem;
+			width:11rem;
 			line-height: 1;
 		}
 	}
@@ -150,12 +153,16 @@ import { ref } from 'vue'
 		}
 	}
 	.copyright {
-		font-size: 0.65rem;
+		font-size: 0.67rem;
 		color:rgba(160, 160, 160, 1);
 		opacity: 0.8;
 		a {
 			color:var(--color-primary);
 		}
+	}
+	.notify-scrolling {
+		font-size: var(--font-size-medium);
+		margin-top:-0.4rem;
 	}
   }
 </style>

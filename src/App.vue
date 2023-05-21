@@ -1,5 +1,12 @@
 <script setup lang="ts">
   import PlanetContainer2 from './components/PlanetContainer2.vue'
+import { onMounted } from 'vue';
+
+  onMounted(() => {
+    let video = document.getElementById('video') as HTMLVideoElement
+    video.playbackRate = 1.25
+    video.play()
+  })
 
 </script>
 
@@ -7,12 +14,12 @@
   <div class="app-container">
     <PlanetContainer2></PlanetContainer2>
 
-    <video id="video" src="@/assets/stars2.mp4" autoplay muted loop>
+    <video id="video" src="@/assets/test5.mp4" autoplay muted loop>
     </video>
 
-    <div class="galaxy celestial">
+    <!-- <div class="galaxy celestial">
       <img src="@/assets/galaxy.png" alt="">
-    </div>
+    </div> -->
 
     <div class="asteroid celestial">
       <img class="" src="@/assets/asteroid.png" alt="" srcset="">
@@ -43,7 +50,6 @@
     height: 100%;
     top:0;
     left:0;
-    filter: brightness(100%);
     object-fit: cover;
   }
   .background-image {
