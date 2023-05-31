@@ -27,11 +27,16 @@ import type { Planet } from '../data/types';
 				// need this function because of stupid vite v-bind issues
 				let planetImg = document.getElementById('planet-img') as HTMLImageElement
 				let descriptionImg = document.getElementById('description-img') as HTMLImageElement
-				
 				planetImg.src = new URL(`../assets/${planet.name}.png`, import.meta.url).href
-				descriptionImg.src = new URL(`../assets/planets/${planet.name}-img.jpg`, import.meta.url).href
+				
+				if (planet.videoUrl) {
+					let descriptionVideo = document.getElementById('description-video') as HTMLImageElement
+					descriptionVideo.src = new URL(`../assets/planets/${planet.name}-video.mp4`, import.meta.url).href
+				}
+				else {
+					descriptionImg.src = new URL(`../assets/planets/${planet.name}-img.jpg`, import.meta.url).href
+				}
 			}
-
 			return {closePlanetDetails, planet,dontAnimateSaturn,setupImages}
 		},
 		mounted() {
@@ -58,7 +63,10 @@ import type { Planet } from '../data/types';
 					</div>
 				</div>
 				<div class="description"><p>{{planet.descriptionLong}}</p></div>
-				<div class="img-container"><img id="description-img" alt=""></div>
+				<div class="media-container">
+					<video v-if="planet.videoUrl" id="description-video" alt="" autoplay loop muted></video>
+					<img v-else id="description-img" alt="">
+				</div>
 			</div>
 	</div>
 </template>
@@ -69,7 +77,7 @@ import type { Planet } from '../data/types';
 	z-index:2;
 	width:100%;
 	height:100%;
-	background: rgba(0, 0, 0, 0.35);
+	background: rgba(0, 0, 0, 0.4);
 	flex-grow:0 !important;
 	display: flex;
 	flex-direction: column;
@@ -156,12 +164,12 @@ import type { Planet } from '../data/types';
 			max-width: 50rem;
 			margin:auto;
 		}
-		.img-container {
+		.media-container {
 			max-width: 50rem;
 			margin:auto;
 			display:block;
 			width:100%;
-			img {
+			img, video {
 				width:100%;
 				height:100%;
 				object-fit: cover;

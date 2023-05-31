@@ -6,6 +6,7 @@ export type Planet = {
 	synopsis: string
 	descriptionLong: string
 	imageUrl: string
+	videoUrl?: string
 	sizeToEarth: number
 	sizeToEarthAdjusted: number
 }

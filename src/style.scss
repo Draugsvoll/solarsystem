@@ -28,8 +28,8 @@
 
   --font-size-xxsmall: 0.80rem;
   --font-size-xsmall: 0.85rem;
-  --font-size-small: 0.95rem;
-  --font-size-medium: 1.05rem;
+  --font-size-small: 0.97rem;
+  --font-size-medium: 1.06rem;
   --font-size-large: 1.30rem;
 
   --transition-xshort:0.25s;
@@ -99,7 +99,7 @@ h1 {
 button {
   border-radius: 4px;
   border: 2px solid var(--color-primary);
-  padding: 0.6rem 1.2em;
+  padding: 0.55rem 1.2em;
   background:transparent;
   color:var(--color-font-white-transparent);
   transition: border-color 0.25s;

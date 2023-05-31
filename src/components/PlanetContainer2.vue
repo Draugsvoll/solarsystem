@@ -8,6 +8,7 @@
 	const planetContainerEl = ref<HTMLElement|undefined>(undefined)
 	const planetInModal = ref<undefined|Planet>(undefined)
 	const planetsEl = ref<undefined|HTMLElement[]>(undefined)
+	const videoEl = ref<undefined|HTMLVideoElement[]>(undefined)
 	const showingRealSizePlanet = ref(false)
 
 	const dayCounter = ref(0)
@@ -21,6 +22,7 @@
 	const currentScaling = ref(100)
 	const planetImgLoadedCounter = ref(0)
 	const isLoading = ref(true)
+	const currentScalingOnVideoEl = ref(1100)
 
 	function planetImgIsLoaded() {
 		planetImgLoadedCounter.value++
@@ -40,13 +42,16 @@
 		if (zoomFactor > 1) {
 			if (currentScaling.value > 250) return
 			currentScaling.value += 5
+			currentScalingOnVideoEl.value += 5
 		}
 		else {
 			if (currentScaling.value < 20) return
 			currentScaling.value -= 5
+			currentScalingOnVideoEl.value -= 5
 		}
-		if (planetContainerEl.value?.style.transform !== undefined) {
+		if (planetContainerEl.value?.style.transform !== undefined && videoEl.value?.style.transform !== undefined) {
 			planetContainerEl.value.style.transform = `scale(${currentScaling.value / 100})`;
+			videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`;
 		}
 	}
 
@@ -151,12 +156,20 @@
 
 	function fetchElements () {
 		planetContainerEl.value = document.querySelector(".planet-container-2") as HTMLElement
-		planetsEl.value = document.querySelectorAll(".planet") as unknown as HTMLElement[];
+		planetsEl.value = document.querySelectorAll(".planet") as unknown as HTMLElement[]
+		videoEl.value = document.getElementById("video") as unknown as HTMLVideoElement
+	}
+
+	function setVideoZoom () {
+		if (videoEl.value) {
+			videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`;
+		}
 	}
 
 	onMounted(() => {
 		fetchElements()
 		setupPlanetImages()
+		setVideoZoom()
 
 		setInterval(() => {
 			if (playAnimation.value === true) {
@@ -231,6 +244,7 @@
 	position:absolute;
 	width:100%;
 	height:100%;
+	transition: all 0.15s;
 	.day-counter {
 		position:absolute;
 		top:calc(50% + 3.1rem);
@@ -274,7 +288,7 @@
 		left:50%;
 		.orbit {
 		  position: absolute;
-		  border:1px solid rgba(255, 255, 255, 0.20);
+		  border:1px solid rgba(255, 255, 255, 0.17);
 		  border-radius: 100%;
 		  transform: translate(-50%, -50%);
 		}
@@ -349,7 +363,9 @@
 		}
 	}
 	  .planet-info {
-		transition: all var(--transition-short); ;
+		transition: all var(--transition-short);
+		font-size: var(--font-size-small);
+		line-height: var(--line-height-small);
 		opacity:0;
 		position: absolute;
 		bottom:75%;
@@ -359,11 +375,11 @@
 		border-bottom-right-radius:var(--border-radius-medium);
 		border-left:1px solid rgba(135, 206, 250, 0.9);
 		padding:1.5rem 1.35rem;
-		width:15.5rem;
+		width:15rem;
 		display: flex;
 		flex-direction: column;
 		pointer-events: none;
-		gap:1.25rem;
+		gap:1.1rem;
 		.planet-name {
 		  color:var(--color-primary);
 		  text-align: left;
@@ -374,7 +390,7 @@
 		.planet-stats {
 			display: flex;
 			max-width:100%;
-			line-height: var(--line-height-medium);
+			line-height: var(--line-height-small);
 			word-wrap: break-word;
 			.stat-label {
 				text-transform: capitalize;
@@ -459,7 +475,7 @@
 
   .center-earth-freeze {
 	animation-play-state: paused !important;
-	transform:translate(-150%, -25%) !important;
+	transform:translate(-87%, -15%) !important;
 	z-index:99 !important;
 	pointer-events: none;
   }

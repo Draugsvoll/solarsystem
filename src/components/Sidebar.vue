@@ -78,7 +78,7 @@ import { ref } from 'vue'
 			<!-- <span class="label-range-input">Brightness</span>
 			<input type="range" v-model="brightness" @input="adjustBrightness()" min="20" max="150" step="10"> -->
 
-			<span class="label-range-input">{{daysPerSecond}} days/sec</span>
+			<span class="label-range-input">{{daysPerSecond}} days / sec</span>
 			<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target?.value)" min="1" max="365" step="1">
 			<p class="info-text-orbits">These are real orbit speeds</p>
 		</div>
@@ -95,8 +95,8 @@ import { ref } from 'vue'
 <style lang="scss" scoped>
 .sidebar {
 	font-size: var(--font-size-small);
-	opacity:0.97;
-	padding:0.65rem;
+	opacity:0.96;
+	padding:0.6rem;
 	z-index:2;
 	position: fixed;
 	left:0;
@@ -105,7 +105,7 @@ import { ref } from 'vue'
 	display:flex;
 	justify-content: space-between;
 	flex-direction: column;
-	gap:1.4rem;
+	gap:1.6rem;
 	h1,h2,h3 {
 	  color:var(--color-primary);
 	  margin:0;
@@ -123,7 +123,7 @@ import { ref } from 'vue'
 			input[type="range"] {
 			margin-top:0;
 			margin-bottom:0.8rem;
-			width: 10.3rem;
+			width: 10.2rem;
 			height: 0.4rem;
 			border-radius: 5px;
 			accent-color: var(--color-primary);
@@ -136,11 +136,15 @@ import { ref } from 'vue'
 			line-height: 1;
 		}
 	}
-	input[type="checkbox"] {
-		width:1rem;
-		height:1rem;
-		margin-bottom:0.3rem;
-		accent-color: var(--color-primary);
+	div {
+		line-height: var(--line-height-medium);
+		input[type="checkbox"] {
+			width:1rem;
+			height:1rem;
+			accent-color: var(--color-primary);
+			vertical-align: middle;
+			margin-bottom: 0.25rem;
+		}
 	}
 	.btn-row {
 		margin-top:0.6rem;
@@ -162,7 +166,7 @@ import { ref } from 'vue'
 	}
 	.notify-scrolling {
 		font-size: var(--font-size-medium);
-		margin-top:-0.4rem;
+		margin-top:-0.8rem;
 	}
   }
 </style>

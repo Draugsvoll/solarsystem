@@ -3,9 +3,9 @@
 import { onMounted } from 'vue';
 
   onMounted(() => {
-    let video = document.getElementById('video') as HTMLVideoElement
-    video.playbackRate = 1.25
-    video.play()
+    // let video = document.getElementById('video') as HTMLVideoElement
+    // video.playbackRate = 0.5
+    // video.play()
   })
 
 </script>
@@ -14,7 +14,7 @@ import { onMounted } from 'vue';
   <div class="app-container">
     <PlanetContainer2></PlanetContainer2>
 
-    <video id="video" src="@/assets/test5.mp4" autoplay muted loop>
+    <video id="video" src="@/assets/galaxy.mp4" autoplay muted loop>
     </video>
 
     <!-- <div class="galaxy celestial">
@@ -51,6 +51,7 @@ import { onMounted } from 'vue';
     top:0;
     left:0;
     object-fit: cover;
+    transition: all 0.25s;
   }
   .background-image {
     position: absolute;
