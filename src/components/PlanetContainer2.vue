@@ -109,13 +109,14 @@
 			let images = document.querySelectorAll('.img-planet') as NodeListOf<HTMLElement>
 			let earthEl = document.getElementById('earth') as HTMLElement
 			let earthImg = document.getElementById('img-earth') as HTMLImageElement
+			let planets = document.querySelectorAll('.planet')
 			if (!images) return
 	
 			images.forEach(image => {
 				image.style.width = planetWidthFake+'rem'
 				image.classList.remove('planet-rotate-slow')
 			})
-			planetsEl.value?.forEach(planet => {
+			planets?.forEach(planet => {
 				planet.classList.remove('planet-real-size')
 			})
 			earthEl?.classList.remove('center-earth-freeze')

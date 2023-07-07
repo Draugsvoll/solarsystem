@@ -13,6 +13,12 @@ import { ref } from 'vue'
 
 			const toggleViewMode = (viewMode: string) => {
 				isOrbitViewMode.value = viewMode === 'orbits' ? true : false
+				if (isOrbitViewMode.value) {
+					// reset to normal sizes before switching view-mode
+					let checkbox = document.getElementById('all-planets-size-checkbox') as  HTMLInputElement
+					checkbox.checked = false
+					toggleRealSizeAll(checkbox)
+				}
 				context.emit('toggleViewMode', isOrbitViewMode.value)
 			}
 
@@ -71,7 +77,7 @@ import { ref } from 'vue'
 </script>
 
 <template>
-	<div class="sidebar" :class="{ offsetYposition : !isOrbitViewMode}" >
+	<div class="sidebar" :class="{ offsetMenuYposition : !isOrbitViewMode}" >
 		<h2>Planet Explorer</h2>
 		<p class="notify-scrolling">Scroll to zoom</p>
 		<div v-show="isOrbitViewMode">
@@ -195,7 +201,7 @@ import { ref } from 'vue'
 		margin-top:-0.4rem;
 	}
   }
-  .offsetYposition {
-	top:8vh;
+  .offsetMenuYposition {
+	top:10vh;
   }
 </style>
