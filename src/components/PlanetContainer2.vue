@@ -1,8 +1,8 @@
 <script setup lang="ts">
-	import { onMounted, ref } from 'vue';
+	import { onMounted, ref } from 'vue'
 	import Modal from './Modal.vue'
 	import {planets} from '../data/planets'
-    import type { Planet } from '../data/types';
+    import type { Planet } from '../data/types'
 	import Sidebar from './Sidebar.vue'
 
 	const planetContainerEl = ref<HTMLElement|undefined>(undefined)
@@ -11,18 +11,28 @@
 	const videoEl = ref<undefined|HTMLVideoElement[]>(undefined)
 	const showingRealSizePlanet = ref(false)
 
+	const isOrbitViewMode = ref(true)
 	const dayCounter = ref(0)
 	const daysPerSecond = ref(0)
 	const showOrbits = ref(true)
 	const showDays = ref(true)
 	const playAnimation = ref(true)
 	const planetWidthFake = 4.2
+	const planetSimpleWidthFake = 6.5
 	const showLabels = ref(true)
 	const showSun = ref(true)
 	const currentScaling = ref(100)
 	const planetImgLoadedCounter = ref(0)
 	const isLoading = ref(true)
 	const currentScalingOnVideoEl = ref(1100)
+
+	function toggleViewMode(data: boolean) {
+		if (data === isOrbitViewMode.value) return
+		isOrbitViewMode.value = data
+		setTimeout(() => {
+			setupPlanetImages()
+		}, 1) // need timeout to wait for div to first render/exist
+	}
 
 	function planetImgIsLoaded() {
 		planetImgLoadedCounter.value++
@@ -40,7 +50,7 @@
 	}
 	function zoomContent(zoomFactor: number) {
 		if (zoomFactor > 1) {
-			if (currentScaling.value > 250) return
+			if (currentScaling.value > 220) return
 			currentScaling.value += 5
 			currentScalingOnVideoEl.value += 5
 		}
@@ -50,16 +60,17 @@
 			currentScalingOnVideoEl.value -= 5
 		}
 		if (planetContainerEl.value?.style.transform !== undefined && videoEl.value?.style.transform !== undefined) {
-			planetContainerEl.value.style.transform = `scale(${currentScaling.value / 100})`;
-			videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`;
+			planetContainerEl.value.style.transform = `scale(${currentScaling.value / 100})`
+			videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`
 		}
 	}
 
 	function toggleAnimation (data: boolean) {
 		playAnimation.value = data
 		let planetImages = document.querySelectorAll('.img-planet')
-		
-		planetsEl.value?.forEach(planet => {
+		let planets = document.querySelectorAll('.planet')
+
+		planets.forEach(planet => {
 			if (playAnimation.value === false){
 				planet.classList.add('pause-animation')
 			}
@@ -94,41 +105,112 @@
 	}
 
 	function displayPlanetsFakeSize () {
-		let images = document.querySelectorAll('.img-planet') as NodeListOf<HTMLElement>;
-		let earthEl = document.getElementById('earth') as HTMLElement;
-		let earthImg = document.getElementById('img-earth') as HTMLImageElement;
-		if (!images) return
+		if (isOrbitViewMode.value) {
+			let images = document.querySelectorAll('.img-planet') as NodeListOf<HTMLElement>
+			let earthEl = document.getElementById('earth') as HTMLElement
+			let earthImg = document.getElementById('img-earth') as HTMLImageElement
+			if (!images) return
+	
+			images.forEach(image => {
+				image.style.width = planetWidthFake+'rem'
+				image.classList.remove('planet-rotate-slow')
+			})
+			planetsEl.value?.forEach(planet => {
+				planet.classList.remove('planet-real-size')
+			})
+			earthEl?.classList.remove('center-earth-freeze')
+			earthImg?.classList.remove('pause-animation')
+			showingRealSizePlanet.value = false
+			showSun.value = true
+		}
+		else {
+			let images = document.querySelectorAll('.img-planet') as NodeListOf<HTMLElement>
+			if (!images) return
+	
+			images.forEach(image => {
+				image.style.width = planetSimpleWidthFake+'rem'
+				image.classList.remove('planet-rotate-slow')
+			})
+			planetsEl.value?.forEach(planet => {
+				planet.classList.remove('planet-real-size')
+			})
+			showingRealSizePlanet.value = false
 
-		images.forEach(image => {
-			image.style.width = planetWidthFake+'rem'
-			image.classList.remove('planet-rotate-slow')
-		})
-		planetsEl.value?.forEach(planet => {
-			planet.classList.remove('planet-real-size')
-		})
-		earthEl?.classList.remove('center-earth-freeze')
-		earthImg?.classList.remove('pause-animation')
-		showingRealSizePlanet.value = false
-		showSun.value = true
+			displayRealSizesAllPlanetsSimple(false)
+		}
 	}
+
+	function displayRealSizesAllPlanetsSimple(data: boolean) {
+			planets.forEach(planet => {
+				let imageDivName = '#img-simple-' + planet.name
+				let image = document.querySelector(imageDivName)
+				if (!image) return
+
+				if (data) { // if displayRealSizes === true
+					let newWidth = planetSimpleWidthFake*planet.sizeToEarth + 'rem'
+					if (planet.sizeToEarthSimple) newWidth = planetSimpleWidthFake*planet.sizeToEarthSimple + 'rem'
+					image.style.width = newWidth
+					image.classList.add('planet-rotate-slow')
+				}
+				else {
+					let newWidth = planetSimpleWidthFake + 'rem'
+					image.style.width = newWidth
+					image.classList.remove('planet-rotate-slow')
+				}
+				
+			})
+
+			if (data) { // if displayRealSizes === true
+				if (planetContainerEl.value?.style.transform !== undefined && videoEl.value?.style.transform !== undefined) {
+					let newZoomValue = 28
+					planetContainerEl.value.style.transform = `scale(${newZoomValue/ 100})`
+					videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`
+					currentScaling.value = newZoomValue
+				}
+				showingRealSizePlanet.value = true
+			}
+			else {
+				if (planetContainerEl.value?.style.transform !== undefined && videoEl.value?.style.transform !== undefined) {
+					let newZoomValue = 100
+					planetContainerEl.value.style.transform = `scale(${newZoomValue/ 100})`
+					videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`
+					currentScaling.value = newZoomValue
+				}
+				showingRealSizePlanet.value = false
+				let checkbox = document.getElementById('all-planets-size-checkbox') as  HTMLInputElement
+				if (!checkbox) return
+				checkbox.checked = false
+			}
+		}
 	
 	function displayPlanetRealSize(planet: Planet) {
-		let image = document.getElementById('img-'+planet.name) as HTMLImageElement
-		let planetNode = document.getElementById(planet.name) as HTMLElement
-		let earthEl = document.getElementById('earth') as HTMLElement
-		let earthImg = document.getElementById('img-earth') as HTMLImageElement
-
-		image.style.width = planet.sizeToEarthAdjusted*4.2+'rem'
-		image.classList.add('planet-rotate-slow')
-		planetNode?.classList.add('planet-real-size')
-		earthImg?.classList.add('pause-animation')
-		earthEl?.classList.add('center-earth-freeze')
-		showingRealSizePlanet.value = true
-		showSun.value = false
+		if (isOrbitViewMode.value) {
+			let image = document.getElementById('img-'+planet.name) as HTMLImageElement
+			let planetNode = document.getElementById(planet.name) as HTMLElement
+			let earthEl = document.getElementById('earth') as HTMLElement
+			let earthImg = document.getElementById('img-earth') as HTMLImageElement
+	
+			image.style.width = planet.sizeToEarthAdjusted*planetWidthFake+'rem'
+			image.classList.add('planet-rotate-slow')
+			planetNode?.classList.add('planet-real-size')
+			earthImg?.classList.add('pause-animation')
+			earthEl?.classList.add('center-earth-freeze')
+			showingRealSizePlanet.value = true
+			showSun.value = false
+		}
+		else {
+			let image = document.getElementById('img-simple-'+planet.name) as HTMLImageElement
+			let planetNode = document.getElementById(planet.name) as HTMLElement
+	
+			image.style.width = planet.sizeToEarthAdjusted*planetSimpleWidthFake+'rem'
+			image.classList.add('planet-rotate-slow')
+			planetNode?.classList.add('planet-real-size')
+			showingRealSizePlanet.value = true
+		}
 	}
 
 	function openPlanetModal (id: string) {
-		let planetContainer = document.querySelector('.planet-container-2') as HTMLElement
+		let planetContainer = document.querySelector('.planet-container') as HTMLElement
 		planetContainer.style.transition = 'all var(--transition-short)'
 		planetContainer.style.transform = 'scale(0.2)' // only use transition while open/close modal
 		planetInModal.value = planets.find(planet => {
@@ -137,7 +219,7 @@
 	}
 
 	function closePlanetModal () {
-		let planetContainer = document.querySelector('.planet-container-2') as HTMLElement
+		let planetContainer = document.querySelector('.planet-container') as HTMLElement
 		planetContainer.style.transform = 'scale(1)'
 		setTimeout(()=> { 
 			planetContainer.style.transition = 'all 0s' // only use transition while open/close modal
@@ -146,23 +228,34 @@
 	}
 
 	function setupPlanetImages () {
-		// need this function because of stupid vite v-bind issues
+		// need this function to set images because of vite v-bind on img-source issues
+		// using try-catch as an easy way to only execute if the divs exists
 		planets.forEach(planet => {
-			let planetImage = document.getElementById(`img-${planet.name}`) as HTMLImageElement
-			planetImage.src = new URL(`../assets/${planet.name}.png`, import.meta.url).href
-			planetImage.style.width = planetWidthFake+'rem'
-		})
+			// orbit view mode
+			try {
+				let planetImage = document.getElementById(`img-${planet.name}`) as HTMLImageElement
+				planetImage.src = new URL(`../assets/${planet.name}.png`, import.meta.url).href
+				planetImage.style.width = planetWidthFake+'rem'
+			} catch (error) {}
+
+			// simple view mode
+			try {
+				let planetImage2 = document.getElementById(`img-simple-${planet.name}`) as HTMLImageElement
+				planetImage2.src = new URL(`../assets/${planet.name}.png`, import.meta.url).href
+				planetImage2.style.width = planetSimpleWidthFake+'rem'
+			} catch (error) {}}
+		)
 	}
 
 	function fetchElements () {
-		planetContainerEl.value = document.querySelector(".planet-container-2") as HTMLElement
+		planetContainerEl.value = document.querySelector(".planet-container") as HTMLElement
 		planetsEl.value = document.querySelectorAll(".planet") as unknown as HTMLElement[]
 		videoEl.value = document.getElementById("video") as unknown as HTMLVideoElement
 	}
 
 	function setVideoZoom () {
 		if (videoEl.value) {
-			videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`;
+			videoEl.value.style.transform = `scale(${currentScalingOnVideoEl.value / 1000})`
 		}
 	}
 
@@ -190,6 +283,8 @@
 		@toggleOrbit="toggleOrbit"
 		@toggleLabels="toggleLabels"
 		@toggleSun="toggleSun"
+		@toggleViewMode="toggleViewMode"
+		@toggleRealSizeAll="displayRealSizesAllPlanetsSimple"
 		@updateDays="updateDays"
 	/>
 
@@ -197,54 +292,115 @@
 		<Modal :planet="planetInModal" v-if="planetInModal" @closePlanetDetails="closePlanetModal()" />
 	</transition>
 	
-	
-	<div class="planet-container-2"  @wheel="handleMouseScroll">
+	<div class="planet-container"  @wheel="handleMouseScroll">
 		
-		<div class="orbit-container" v-if="showOrbits">
-			<div v-for="planet,index in planets" :class="'orbit'+' orbit'+(index+1)+' ' +'orbit-'+planet.name"></div>
-		</div>
-		
-		<transition name="fade">
-			<div v-if="showSun" class="sun">
+		<transition-group name="fade">
+			<div v-if="showSun && isOrbitViewMode" class="sun">
 				<img src="@/assets/sun.png" alt="" srcset="">
 			</div>
-		</transition>
-		<p v-if="showDays" class="day-counter">Day: {{Math.floor(dayCounter).toLocaleString()}}</p>
+			<p v-if="showDays && isOrbitViewMode" class="day-counter">Day: {{Math.floor(dayCounter).toLocaleString()}}</p>
+		</transition-group>
+		
 
-		<div v-for="planet, index in planets" :id="planet.name"
-			:class="'planet planet'+(index+1)"
-			:style="
-				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'"
-			>
-			<!-- <p class="size-in-earths">{{planet.sizeToEarth}} earths</p> -->
-			<img @load="planetImgIsLoaded()" :id="'img-'+planet.name" class="img-planet"  alt="" srcset="">
-			<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
-			<div class="planet-info">
-				<h3 class="planet-name">{{planet.name}}</h3>
-				<div>
-					<p v-for="stat in planet.stats" class="planet-stats">
-						<p class="stat-label">{{stat.label}}:</p>
-						<p class="stat-value">{{stat.value}}</p>
-					</p>
+		<!-- Orbit view mode -->
+		<transition-group name="opacity">
+			<div v-if="isOrbitViewMode"> 
+				<div v-if="showOrbits" class="orbit-container" >
+					<div v-for="planet,index in planets" :class="'orbit'+' orbit'+(index+1)+' ' +'orbit-'+planet.name"></div>
 				</div>
-				<p class="planet-infotext">{{planet.synopsis}}</p>
-				<div class="btn-row">
-					<button v-if="!showingRealSizePlanet && planet.name !== 'earth'" @click="displayPlanetRealSize(planet)">Compare to Earth</button>
-					<button v-else-if="showingRealSizePlanet" @click="displayPlanetsFakeSize()">Reset size</button>
-					<button @click="openPlanetModal(planet.name)">More</button>
+
+				<div v-if="isOrbitViewMode"  v-for="planet, index in planets" :id="planet.name"
+				:class="'planet planet'+(index+1)"
+				:style="
+				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'"
+				>
+					<!-- <p class="size-in-earths">{{planet.sizeToEarth}} earths</p> -->
+					<img @load="planetImgIsLoaded()" :id="'img-'+planet.name" class="img-planet"  alt="" srcset="">
+					<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
+					<div class="planet-info">
+						<h3 class="planet-name">{{planet.name}}</h3>
+						<div>
+							<p v-for="stat in planet.stats" class="planet-stats">
+								<p class="stat-label">{{stat.label}}:</p>
+								<p class="stat-value">{{stat.value}}</p>
+							</p>
+						</div>
+						<p class="planet-infotext">{{planet.synopsis}}</p>
+						<div class="btn-row">
+							<button v-if="!showingRealSizePlanet && planet.name !== 'earth'" @click="displayPlanetRealSize(planet)">Compare to Earth</button>
+							<button v-else-if="showingRealSizePlanet" @click="displayPlanetsFakeSize()">Reset size</button>
+							<button @click="openPlanetModal(planet.name)">More</button>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
+		</transition-group>
 
+		<!-- Simple view mode -->
+		<transition-group name="fade">
+			<div v-if="!isOrbitViewMode" class="planet-container-simple">
+				<div class="planet-simple" v-for="planet in planets">
+					<img :id="'img-simple-'+planet.name" class="img-planet"  alt="" srcset="">
+					<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
+					<div class="planet-info">
+						<h3 class="planet-name">{{planet.name}}</h3>
+						<div>
+							<p v-for="stat in planet.stats" class="planet-stats">
+								<p class="stat-label">{{stat.label}}:</p>
+								<p class="stat-value">{{stat.value}}</p>
+							</p>
+						</div>
+						<p class="planet-infotext">{{planet.synopsis}}</p>
+						<div class="btn-row">
+							<button v-if="!showingRealSizePlanet && planet.name !== 'earth'" @click="displayPlanetRealSize(planet)">Compare to Earth</button>
+							<button v-else-if="showingRealSizePlanet" @click="displayPlanetsFakeSize()">Reset size</button>
+							<button @click="openPlanetModal(planet.name)">More</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</transition-group>
+		
 	</div>
 </template>
 <style lang="scss" scoped>
-  .planet-container-2 {
+.planet-container {
+	transform:scale(0.9);
 	z-index:1;
 	position:absolute;
 	width:100%;
 	height:100%;
 	transition: all 0.15s;
+	.planet-container-simple {
+		position: absolute;
+		top:50%;
+		left:50%;
+		transform: translate(-50%, -50%);
+		display:flex;
+		gap:2.2rem;
+		z-index: 99;
+		padding:60rem;
+		.planet-label {
+			margin-top:0.4rem;
+		}
+		.planet-simple {
+			position:relative !important;
+			top: 0 !important;
+			left: 0 !important;
+			margin-top: auto;
+			margin-bottom: auto;
+			&:hover {
+				transform: translateY(-0.35rem);
+				z-index:99;
+			}
+			.planet-info {
+				transform: scale(0.94);
+			}
+			img {
+				animation: rotate var(--planet-rotate-speed-simple) linear infinite reverse;
+			}
+		}
+	}
 	.day-counter {
 		position:absolute;
 		top:calc(50% + 3.1rem);
@@ -286,6 +442,7 @@
 		transform: translate(-50%, -50%);
 		top:50%;
 		left:50%;
+    	padding: 100rem;
 		.orbit {
 		  position: absolute;
 		  border:1px solid rgba(255, 255, 255, 0.17);
@@ -325,7 +482,7 @@
 		  height: calc(var(--orbit-width) * 4.5);
 		}
 	  }
-	.planet { 
+	.planet, .planet-simple { 
 	  position: absolute;
 	  display:flex;
 	  min-width:2rem;
@@ -353,16 +510,15 @@
 		  pointer-events: all;
 		}
 	  }
-	#img-saturn {
+	#img-saturn, #img-simple-saturn {
 		animation:none !important;
 		padding-top:0.8rem;
 	}
-	#venus {
-		.planet-label {
-			margin-top:-0.4rem !important;
-		}
+	#img-venus {
+		margin-bottom:-0.2rem;
 	}
-	  .planet-info {
+
+	.planet-info {
 		transition: all var(--transition-short);
 		font-size: var(--font-size-small);
 		line-height: var(--line-height-small);
@@ -428,6 +584,7 @@
 		button {
 			margin:0 auto;
 			width:9.8rem;
+			outline:none;
 		}
 	  }
 	}
@@ -478,12 +635,5 @@
 	transform:translate(-87%, -15%) !important;
 	z-index:99 !important;
 	pointer-events: none;
-  }
-  .fade-enter-active, .fade-leave-active {
-	transition: all var(--transition-short) ease-in-out;
-  }
-  .fade-leave-to,.fade-enter-from {
-	transform: scale(10);
-	opacity:0;
   }
 </style>

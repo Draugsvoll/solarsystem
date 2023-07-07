@@ -112,13 +112,13 @@
   }
   @keyframes brightnessAnimationSun {
 	0% {
-		filter: brightness(68%);
+		filter: brightness(62%);
 	}
 	50% {
-		filter: brightness(76%);
+		filter: brightness(72%);
 	}
 	100% {
-		filter: brightness(68%);
+		filter: brightness(62%);
 	}
 }
 .loader {
@@ -162,4 +162,28 @@
 @keyframes rotation {
    from {transform: rotate(0deg);}
    to {transform: rotate(359deg);}
+}
+
+
+.fade-enter-active, .fade-leave-active {
+	transition: all var(--transition-medium) 
+  }
+  .fade-leave-to,.fade-enter-from {
+	transform: scale(10);
+	opacity:0;
+  }
+
+.slide-from-right-enter-active, .slide-from-right-leave-active {
+	transition: all var(--transition-medium);
+}
+.slide-from-right-leave-to,.slide-from-right-enter-from {
+	transform: translateX(110vw);
+	opacity:0;
+  }
+
+.opacity-enter-active, .opacity-leave-active {
+transition: all var(--transition-medium);
+}
+.opacity-leave-to,.opacity-enter-from {
+opacity:0;
 }

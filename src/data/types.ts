@@ -9,6 +9,7 @@ export type Planet = {
 	videoUrl?: string
 	sizeToEarth: number
 	sizeToEarthAdjusted: number
+	sizeToEarthSimple?: number
 }
 
 type stat = {

@@ -5,6 +5,16 @@ import { ref } from 'vue'
 		setup(_, context) {
 			const brightness = ref(90)
 			const daysPerSecond = ref(5)
+			const isOrbitViewMode = ref(true)
+
+			const toggleRealSizeAll = (isChecked: HTMLInputElement) => {
+				context.emit('toggleRealSizeAll', isChecked?.checked)
+			}
+
+			const toggleViewMode = (viewMode: string) => {
+				isOrbitViewMode.value = viewMode === 'orbits' ? true : false
+				context.emit('toggleViewMode', isOrbitViewMode.value)
+			}
 
 			const toggleOrbit = (isChecked: HTMLInputElement) => {
 				context.emit('toggleOrbit', isChecked?.checked)
@@ -27,31 +37,31 @@ import { ref } from 'vue'
 				if (!videoEl) return
 				videoEl.style.filter = `brightness(${brightness.value}%)`
 			}
-		function fullscreen () {
-			const element = document.documentElement; // Select the root element of the document
-			if (element.requestFullscreen) {
-			element.requestFullscreen();
-			} else if (element.mozRequestFullScreen) { // For Firefox
-			element.mozRequestFullScreen();
-			} else if (element.webkitRequestFullscreen) { // For Chrome, Safari, and Opera
-			element.webkitRequestFullscreen();
-			} else if (element.msRequestFullscreen) { // For Internet Explorer and Edge
-			element.msRequestFullscreen();
+			function fullscreen () {
+				const element = document.documentElement; // Select the root element of the document
+				if (element.requestFullscreen) {
+				element.requestFullscreen();
+				} else if (element.mozRequestFullScreen) { // For Firefox
+				element.mozRequestFullScreen();
+				} else if (element.webkitRequestFullscreen) { // For Chrome, Safari, and Opera
+				element.webkitRequestFullscreen();
+				} else if (element.msRequestFullscreen) { // For Internet Explorer and Edge
+				element.msRequestFullscreen();
+				}
 			}
-		}
-		// function exitFullscreen () {
-		// 	if (document.exitFullscreen) {
-		// 	document.exitFullscreen();
-		// 	} else if (document.mozCancelFullScreen) { // For Firefox
-		// 	document.mozCancelFullScreen();
-		// 	} else if (document.webkitExitFullscreen) { // For Chrome, Safari, and Opera
-		// 	document.webkitExitFullscreen();
-		// 	} else if (document.msExitFullscreen) { // For Internet Explorer and Edge
-		// 	document.msExitFullscreen();
-		// 	}
-		// }
+			// function exitFullscreen () {
+			// 	if (document.exitFullscreen) {
+			// 	document.exitFullscreen();
+			// 	} else if (document.mozCancelFullScreen) { // For Firefox
+			// 	document.mozCancelFullScreen();
+			// 	} else if (document.webkitExitFullscreen) { // For Chrome, Safari, and Opera
+			// 	document.webkitExitFullscreen();
+			// 	} else if (document.msExitFullscreen) { // For Internet Explorer and Edge
+			// 	document.msExitFullscreen();
+			// 	}
+			// }
 
-			return {toggleOrbit, toggleLabels, toggleSun, toggleAnimate, adjustBrightness, brightness,adjustDaysPerSecond,daysPerSecond,fullscreen}
+			return {toggleOrbit, toggleLabels, toggleSun, toggleAnimate, adjustBrightness, brightness,adjustDaysPerSecond,daysPerSecond,fullscreen,toggleViewMode,isOrbitViewMode,toggleRealSizeAll}
 		},
 		mounted() {
 			this.adjustDaysPerSecond(this.daysPerSecond)
@@ -61,30 +71,32 @@ import { ref } from 'vue'
 </script>
 
 <template>
-	<div class="sidebar">
-		<div>
-		  <h2>Planet Explorer</h2>
-		</div>
-		<div>
-		  <p class="notify-scrolling">Scroll to zoom</p>
-		</div>
-		<div>
+	<div class="sidebar" :class="{ offsetYposition : !isOrbitViewMode}" >
+		<h2>Planet Explorer</h2>
+		<p class="notify-scrolling">Scroll to zoom</p>
+		<div v-show="isOrbitViewMode">
 			<span class="setting-label">Orbits</span><input type="checkbox" checked @input="toggleOrbit($event.target as HTMLInputElement)"><br>
 			<span class="setting-label">Labels</span><input type="checkbox" checked @input="toggleLabels($event.target as HTMLInputElement)"><br>
 			<span class="setting-label">Sun</span><input type="checkbox" checked @input="toggleSun($event.target as HTMLInputElement)"><br>
 			<span class="setting-label">Animation</span><input type="checkbox" checked @input="toggleAnimate($event.target as HTMLInputElement)"><br>
 		</div>
-		<div class="range-container">
-			<!-- <span class="label-range-input">Brightness</span>
-			<input type="range" v-model="brightness" @input="adjustBrightness()" min="20" max="150" step="10"> -->
-
-			<span class="label-range-input">{{daysPerSecond}} days / sec</span>
-			<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target?.value)" min="1" max="365" step="1">
-			<p class="info-text-orbits">These are real orbit speeds</p>
+		<div v-show="!isOrbitViewMode">
+			<span class="setting-label" id="setting-label-all-planets">Real size all planets</span><input id="all-planets-size-checkbox" type="checkbox" @input="toggleRealSizeAll($event.target as HTMLInputElement)"><br>
 		</div>
+		<div v-show="isOrbitViewMode" class="range-container">
+			<!-- <span class="label-range-input">Brightness</span>
+				<input type="range" v-model="brightness" @input="adjustBrightness()" min="20" max="150" step="10"> -->
+				
+				<span class="label-range-input">{{daysPerSecond}} days / sec</span>
+				<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target?.value)" min="1" max="365" step="1">
+				<p class="info-text-orbits">These are real orbit speeds</p>
+			</div>
+			<!-- <div class="btn-row">
+				<button @click="fullscreen()">Fullscreen</button>
+		</div> -->
 		<div class="btn-row">
-		  <button @click="fullscreen()">Fullscreen</button>
-		  <!-- <button @click="exitFullscreen()">Normal screen</button> -->
+			<button :class="{ highlighted : isOrbitViewMode}" @click="toggleViewMode('orbits')">Orbits</button>
+			<button :class="{ highlighted : !isOrbitViewMode}" @click="toggleViewMode('simple')">Simple</button>
 		</div>
 		<div class="copyright">
 			<p>&copy; Copyright 2023 <a target="_blank" href="https://ove-portfolio.netlify.app">Ove H. Draugsvoll</a></p>
@@ -94,9 +106,10 @@ import { ref } from 'vue'
 
 <style lang="scss" scoped>
 .sidebar {
+	transform:scale(0.95);
 	font-size: var(--font-size-small);
 	opacity:0.96;
-	padding:0.6rem;
+	padding:0.45rem;
 	z-index:2;
 	position: fixed;
 	left:0;
@@ -105,6 +118,7 @@ import { ref } from 'vue'
 	display:flex;
 	justify-content: space-between;
 	flex-direction: column;
+	transition:all var(--transition-medium);
 	gap:1.6rem;
 	h1,h2,h3 {
 	  color:var(--color-primary);
@@ -113,7 +127,11 @@ import { ref } from 'vue'
 	}
 	.setting-label {
 	  display:inline-block;
-	  width:6rem;
+	  width:5.5rem;
+	  margin-bottom:0.1rem;
+	}
+	#setting-label-all-planets {
+		width:9.6rem;
 	}
 	.label-range-input {
 	  display:block;
@@ -143,17 +161,25 @@ import { ref } from 'vue'
 			height:1rem;
 			accent-color: var(--color-primary);
 			vertical-align: middle;
-			margin-bottom: 0.25rem;
+			margin-bottom: 0.15rem;
 		}
 	}
 	.btn-row {
 		margin-top:0.6rem;
 		display:flex;
-		gap:0.5rem;
+		gap:0.2rem;
 		width:fit-content;
 		justify-content: space-between;
 		button {
 			letter-spacing: var(--letter-spacing-small);
+			min-width:5.3rem;
+			
+		}
+		.highlighted {
+			background:var(--color-primary);
+			&:hover {
+				color: var(--color-font-white-transparent);
+			}
 		}
 	}
 	.copyright {
@@ -166,7 +192,10 @@ import { ref } from 'vue'
 	}
 	.notify-scrolling {
 		font-size: var(--font-size-medium);
-		margin-top:-0.8rem;
+		margin-top:-0.4rem;
 	}
+  }
+  .offsetYposition {
+	top:8vh;
   }
 </style>

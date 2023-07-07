@@ -196,6 +196,7 @@ export const planets: Planet[] = [
 		name: 'saturn',
 		sizeToEarth: 9.46,
 		sizeToEarthAdjusted: 32,
+		sizeToEarthSimple: 14,
 		orbitTime: 10759,
 		stats: [
 			{

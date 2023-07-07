@@ -40,10 +40,11 @@
   --border-radius-medium:7px;
   --border-radius-large:11px;
 
-  --orbit-width:12rem;
+  --orbit-width:13rem;
 
-  --planet-rotate-speed:30s;
-  --planet-rotate-speed-slow:88s;
+  --planet-rotate-speed:40s;
+  --planet-rotate-speed-simple:65s;
+  --planet-rotate-speed-slow:110s;
 
   @media screen and (min-width: 1900px) {
     font-size: 17px;
