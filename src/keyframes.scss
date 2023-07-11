@@ -182,8 +182,8 @@
   }
 
 .opacity-enter-active, .opacity-leave-active {
-transition: all var(--transition-medium);
+	transition: all var(--transition-medium);
 }
 .opacity-leave-to,.opacity-enter-from {
-opacity:0;
+	opacity:0;
 }

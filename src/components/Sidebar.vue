@@ -4,7 +4,7 @@ import { ref } from 'vue'
 	export default {
 		setup(_, context) {
 			const brightness = ref(90)
-			const daysPerSecond = ref(5)
+			const daysPerSecond = ref(10)
 			const isOrbitViewMode = ref(true)
 
 			const toggleRealSizeAll = (isChecked: HTMLInputElement) => {
@@ -173,7 +173,7 @@ import { ref } from 'vue'
 	.btn-row {
 		margin-top:0.6rem;
 		display:flex;
-		gap:0.2rem;
+		gap:0.3rem;
 		width:fit-content;
 		justify-content: space-between;
 		button {

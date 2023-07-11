@@ -25,10 +25,24 @@
 	const planetImgLoadedCounter = ref(0)
 	const isLoading = ref(true)
 	const currentScalingOnVideoEl = ref(1100)
+	const scrollingCounter = ref(0)
+
+	function scrollX(direction: 'left' | 'right') {
+		let planetContainerSimple = document.querySelector('.planet-container-simple')
+		if (!planetContainerSimple) return
+		if (direction === 'left') {
+			scrollingCounter.value -= 8
+		}
+		else {
+			scrollingCounter.value += 8
+		}
+		planetContainerSimple.style.marginLeft = scrollingCounter.value + 'rem'
+	}
 
 	function toggleViewMode(data: boolean) {
 		if (data === isOrbitViewMode.value) return
 		isOrbitViewMode.value = data
+		scrollingCounter.value = 0
 		setTimeout(() => {
 			setupPlanetImages()
 		}, 1) // need timeout to wait for div to first render/exist
@@ -57,7 +71,7 @@
 		else {
 			if (currentScaling.value < 20) return
 			currentScaling.value -= 5
-			currentScalingOnVideoEl.value -= 5
+			if (currentScalingOnVideoEl.value >= 1015) currentScalingOnVideoEl.value -= 5
 		}
 		if (planetContainerEl.value?.style.transform !== undefined && videoEl.value?.style.transform !== undefined) {
 			planetContainerEl.value.style.transform = `scale(${currentScaling.value / 100})`
@@ -289,6 +303,13 @@
 		@updateDays="updateDays"
 	/>
 
+	<transition-group name="opacity">
+		<div class="scroll-btn-container">
+			<button v-if="!isOrbitViewMode && !planetInModal" class="scroll-btn scroll-left-btn far fa-chevron-left fa-3x" @click="scrollX('left')"></button>
+			<button v-if="!isOrbitViewMode && !planetInModal" class="scroll-btn scroll-right-btn far fa-chevron-right fa-3x" @click="scrollX('right')"></button>
+		</div>
+	</transition-group>
+
 	<transition name="fade">
 		<Modal :planet="planetInModal" v-if="planetInModal" @closePlanetDetails="closePlanetModal()" />
 	</transition>
@@ -380,7 +401,9 @@
 		display:flex;
 		gap:2.2rem;
 		z-index: 99;
-		padding:60rem;
+		padding:300rem;
+		transition: all var(--transition-short) ease-out;
+		margin-left:0rem;
 		.planet-label {
 			margin-top:0.4rem;
 		}
@@ -443,7 +466,7 @@
 		transform: translate(-50%, -50%);
 		top:50%;
 		left:50%;
-    	padding: 100rem;
+    	padding: 300rem;
 		.orbit {
 		  position: absolute;
 		  border:1px solid rgba(255, 255, 255, 0.17);
@@ -636,5 +659,28 @@
 	transform:translate(-87%, -15%) !important;
 	z-index:99 !important;
 	pointer-events: none;
+  }
+  .scroll-btn-container {
+	position: absolute;
+	display: flex;
+	gap:1.15rem;
+	z-index:3;
+	transform: translate(-50%, -50%);
+	top:71%;
+	left:50%;
+	  .scroll-btn {
+		font-size: 1.1rem;
+		padding:1.0rem 1.4rem;
+		color:rgba(255,255,255,0.7);
+		font-weight: 200;
+		border:1px solid rgba(255,255,255,0.15);
+		z-index:999;
+		background:rgba(0,0,0,0.15);
+		&:hover {
+			background:rgba(0,0,0,0.3);
+			border:1px solid rgba(255,255,255,0.2);
+			color:var(--color-primary);
+		}
+	}
   }
 </style>
