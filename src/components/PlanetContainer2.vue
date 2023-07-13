@@ -27,14 +27,20 @@
 	const currentScalingOnVideoEl = ref(1100)
 	const scrollingCounter = ref(0)
 
+	function scrollXReset () {
+		scrollingCounter.value = 0
+		let planetContainerSimple = document.querySelector('.planet-container-simple')
+		planetContainerSimple.style.marginLeft = scrollingCounter.value + 'rem'
+	}
+
 	function scrollX(direction: 'left' | 'right') {
 		let planetContainerSimple = document.querySelector('.planet-container-simple')
 		if (!planetContainerSimple) return
 		if (direction === 'left') {
-			scrollingCounter.value -= 8
+			scrollingCounter.value -= 9
 		}
 		else {
-			scrollingCounter.value += 8
+			scrollingCounter.value += 9
 		}
 		planetContainerSimple.style.marginLeft = scrollingCounter.value + 'rem'
 	}
@@ -167,7 +173,8 @@
 					image.style.width = newWidth
 					image.classList.add('planet-rotate-slow')
 				}
-				else {
+				else { // if displayRealSizes === false
+					scrollXReset()
 					let newWidth = planetSimpleWidthFake + 'rem'
 					image.style.width = newWidth
 					image.classList.remove('planet-rotate-slow')
@@ -677,8 +684,8 @@
 		z-index:999;
 		background:rgba(0,0,0,0.15);
 		&:hover {
-			background:rgba(0,0,0,0.3);
-			border:1px solid rgba(255,255,255,0.2);
+			background:rgba(0,0,0,0.35);
+			border:1px solid rgba(255,255,255,0.25);
 			color:var(--color-primary);
 		}
 	}
