@@ -187,3 +187,10 @@
 .opacity-leave-to,.opacity-enter-from {
 	opacity:0;
 }
+
+.opacity-short-enter-active, .opacity-short-leave-active {
+	transition: all 0.4s;
+}
+.opacity-short-leave-to,.opacity-short-enter-from {
+	opacity:0;
+}

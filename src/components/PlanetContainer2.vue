@@ -27,14 +27,20 @@
 	const currentScalingOnVideoEl = ref(1100)
 	const scrollingCounter = ref(0)
 
+	function scrollXReset () {
+		scrollingCounter.value = 0
+		let planetContainerSimple = document.querySelector('.planet-container-simple')
+		planetContainerSimple.style.marginLeft = scrollingCounter.value + 'rem'
+	}
+
 	function scrollX(direction: 'left' | 'right') {
 		let planetContainerSimple = document.querySelector('.planet-container-simple')
 		if (!planetContainerSimple) return
 		if (direction === 'left') {
-			scrollingCounter.value -= 8
+			scrollingCounter.value += 9
 		}
 		else {
-			scrollingCounter.value += 8
+			scrollingCounter.value -= 9
 		}
 		planetContainerSimple.style.marginLeft = scrollingCounter.value + 'rem'
 	}
@@ -167,7 +173,8 @@
 					image.style.width = newWidth
 					image.classList.add('planet-rotate-slow')
 				}
-				else {
+				else { // if displayRealSizes === false
+					scrollXReset()
 					let newWidth = planetSimpleWidthFake + 'rem'
 					image.style.width = newWidth
 					image.classList.remove('planet-rotate-slow')
@@ -327,9 +334,11 @@
 		<!-- Orbit view mode -->
 		<transition-group name="opacity">
 			<div v-if="isOrbitViewMode"> 
-				<div v-if="showOrbits" class="orbit-container" >
-					<div v-for="planet,index in planets" :class="'orbit'+' orbit'+(index+1)+' ' +'orbit-'+planet.name"></div>
-				</div>
+				<transition name="opacity-short">
+					<div v-if="showOrbits" class="orbit-container" >
+						<div v-for="planet,index in planets" :class="'orbit'+' orbit'+(index+1)+' ' +'orbit-'+planet.name"></div>
+					</div>
+				</transition>
 
 				<div v-if="isOrbitViewMode"  v-for="planet, index in planets" :id="planet.name"
 				:class="'planet planet'+(index+1)"
@@ -338,7 +347,9 @@
 				>
 					<!-- <p class="size-in-earths">{{planet.sizeToEarth}} earths</p> -->
 					<img @load="planetImgIsLoaded()" :id="'img-'+planet.name" class="img-planet"  alt="" srcset="">
-					<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
+					<transition name="opacity-short">
+						<div class="planet-label" v-if="showLabels"><p>{{planet.name}}</p></div>
+					</transition>
 					<div class="planet-info">
 						<h3 class="planet-name">{{planet.name}}</h3>
 						<div>
@@ -402,7 +413,7 @@
 		gap:2.2rem;
 		z-index: 99;
 		padding:300rem;
-		transition: all var(--transition-short) ease-out;
+		transition: all var(--transition-short) ease-in-out;
 		margin-left:0rem;
 		.planet-label {
 			margin-top:0.4rem;
@@ -469,7 +480,7 @@
     	padding: 300rem;
 		.orbit {
 		  position: absolute;
-		  border:1px solid rgba(255, 255, 255, 0.17);
+		  border:1px solid rgba(255, 255, 255, 0.14);
 		  border-radius: 100%;
 		  transform: translate(-50%, -50%);
 		}
@@ -677,8 +688,8 @@
 		z-index:999;
 		background:rgba(0,0,0,0.15);
 		&:hover {
-			background:rgba(0,0,0,0.3);
-			border:1px solid rgba(255,255,255,0.2);
+			background:rgba(0,0,0,0.35);
+			border:1px solid rgba(255,255,255,0.25);
 			color:var(--color-primary);
 		}
 	}

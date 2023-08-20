@@ -44,7 +44,7 @@ export const planets: Planet[] = [
 	{
 		name: 'venus',
 		sizeToEarth: 0.95,
-		sizeToEarthAdjusted: 0.95,
+		sizeToEarthAdjusted: 0.85,
 		orbitTime: 225,
 		stats: [
 			{

@@ -14,8 +14,8 @@
   --line-height-lmedium:1.37rem;
   --line-height-large:1.5rem;
 
-  --color-primary:rgb(112, 193, 244);
-  --color-background:rgb(1 22 41 / 90%);
+  --color-primary:rgb(91, 177, 231);
+  --color-background:rgba(2, 16, 41, 0.9);
   --color-background-lower-alpha:rgba(1, 25, 48, 0.82);
   --color-font-white-transparent:rgba(255, 255, 255, 0.87);
 
@@ -41,7 +41,7 @@
   --border-radius-medium:7px;
   --border-radius-large:11px;
 
-  --orbit-width:13rem;
+  --orbit-width:14rem;
 
   --planet-rotate-speed:40s;
   --planet-rotate-speed-simple:65s;
@@ -49,19 +49,19 @@
 
   @media screen and (min-width: 1900px) {
     font-size: 17px;
-    --orbit-width:13.5rem;
+    --orbit-width:14.5rem;
   }
   @media screen and (min-width: 2150px) {
     font-size: 18px;
-    --orbit-width:13.5rem;
+    --orbit-width:14.5rem;
   }
   @media screen and (min-width: 2500px) {
     font-size: 19px;
-    --orbit-width:14rem;
+    --orbit-width:15rem;
   }
   @media screen and (min-width: 3300px) {
     font-size: 22px;
-    --orbit-width:14.3rem;
+    --orbit-width:15.5rem;
   }
 }
 html {
@@ -105,7 +105,7 @@ h1 {
 button {
   border-radius: 4px;
   border: 2px solid var(--color-primary);
-  padding: 0.55rem 1.2em;
+  padding: 0.53rem 1.2em;
   background:transparent;
   color:var(--color-font-white-transparent);
   transition: border-color 0.25s;

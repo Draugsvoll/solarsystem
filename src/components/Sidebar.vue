@@ -3,21 +3,30 @@ import { ref } from 'vue'
 
 	export default {
 		setup(_, context) {
-			const brightness = ref(90)
+			const brightness = ref(100)
 			const daysPerSecond = ref(10)
 			const isOrbitViewMode = ref(true)
 
-			const toggleRealSizeAll = (isChecked: HTMLInputElement) => {
-				context.emit('toggleRealSizeAll', isChecked?.checked)
+			const toggleRealSizeAll = (isChecked: HTMLInputElement | boolean) => {
+				if (typeof isChecked === 'object') {
+					context.emit('toggleRealSizeAll', isChecked.checked)
+				} else {
+					context.emit('toggleRealSizeAll', isChecked)
+				}
 			}
 
 			const toggleViewMode = (viewMode: string) => {
 				isOrbitViewMode.value = viewMode === 'orbits' ? true : false
 				if (isOrbitViewMode.value) {
 					// reset to normal sizes before switching view-mode
-					let checkbox = document.getElementById('all-planets-size-checkbox') as  HTMLInputElement
+					let checkbox = document.getElementById('checkbox-all-planets') as  HTMLInputElement
 					checkbox.checked = false
 					toggleRealSizeAll(checkbox)
+				}
+				else { // switching to simple view
+					let checkboxLabels = document.getElementById('checkbox-label') as  HTMLInputElement
+					checkboxLabels.checked = true
+					toggleLabels(checkboxLabels)
 				}
 				context.emit('toggleViewMode', isOrbitViewMode.value)
 			}
@@ -80,14 +89,45 @@ import { ref } from 'vue'
 	<div class="sidebar" :class="{ offsetMenuYposition : !isOrbitViewMode}" >
 		<h2>Planet Explorer</h2>
 		<p class="notify-scrolling">Scroll to zoom</p>
-		<div v-show="isOrbitViewMode">
-			<span class="setting-label">Orbits</span><input type="checkbox" checked @input="toggleOrbit($event.target as HTMLInputElement)"><br>
-			<span class="setting-label">Labels</span><input type="checkbox" checked @input="toggleLabels($event.target as HTMLInputElement)"><br>
-			<span class="setting-label">Sun</span><input type="checkbox" checked @input="toggleSun($event.target as HTMLInputElement)"><br>
-			<span class="setting-label">Animation</span><input type="checkbox" checked @input="toggleAnimate($event.target as HTMLInputElement)"><br>
+		<div class="switch-container" v-show="isOrbitViewMode">
+			<span class="setting-label">Orbits</span>
+			<label class="switch">
+				<input type="checkbox" class="switch-input" checked @input="toggleOrbit($event.target as HTMLInputElement)" />
+				<span class="switch-label" data-on="On" data-off="Off"></span>
+				<span class="switch-knob"></span>
+            </label>
+			<br>
+
+			<span class="setting-label">Labels</span>
+			<label for="checkbox-label" class="switch">
+				<input id="checkbox-label" type="checkbox" class="switch-input" checked @input="toggleLabels($event.target as HTMLInputElement)" />
+				<span class="switch-label" data-on="On" data-off="Off"></span>
+				<span class="switch-knob"></span>
+            </label>
+			<br>
+
+			<span class="setting-label">Sun</span>
+			<label class="switch">
+				<input type="checkbox" class="switch-input" checked @input="toggleSun($event.target as HTMLInputElement)" />
+				<span class="switch-label" data-on="On" data-off="Off"></span>
+				<span class="switch-knob"></span>
+            </label>
+			<br>
+
+			<span class="setting-label">Animation</span>
+			<label class="switch">
+				<input type="checkbox" class="switch-input" checked @input="toggleAnimate($event.target as HTMLInputElement)" />
+				<span class="switch-label" data-on="On" data-off="Off"></span>
+				<span class="switch-knob"></span>
+            </label>
 		</div>
-		<div v-show="!isOrbitViewMode">
-			<span class="setting-label" id="setting-label-all-planets">Real size all planets</span><input id="all-planets-size-checkbox" type="checkbox" @input="toggleRealSizeAll($event.target as HTMLInputElement)"><br>
+		<div v-show="!isOrbitViewMode" class="switch-container">
+			<span class="setting-label" id="setting-label-all-planets">Real size all planets</span>
+			<label for="checkbox-all-planets" class="switch">
+				<input type="checkbox" class="switch-input" id="checkbox-all-planets" @input="toggleRealSizeAll($event.target as HTMLInputElement)" />
+				<span class="switch-label" data-on="On" data-off="Off"></span>
+				<span class="switch-knob"></span>
+            </label>
 		</div>
 		<div v-show="isOrbitViewMode" class="range-container">
 			<!-- <span class="label-range-input">Brightness</span>
@@ -95,7 +135,7 @@ import { ref } from 'vue'
 				
 				<span class="label-range-input">{{daysPerSecond}} days / sec</span>
 				<input type="range" v-mode="daysPerSecond" @change="adjustDaysPerSecond($event.target?.value)" min="1" max="365" step="1">
-				<p class="info-text-orbits">These are real orbit speeds</p>
+				<!-- <p class="info-text-orbits">These are real orbit speeds</p> -->
 			</div>
 			<!-- <div class="btn-row">
 				<button @click="fullscreen()">Fullscreen</button>
@@ -112,10 +152,11 @@ import { ref } from 'vue'
 
 <style lang="scss" scoped>
 .sidebar {
-	transform:scale(0.95);
+	transform:scale(0.93);
 	font-size: var(--font-size-small);
-	opacity:0.96;
+	opacity:0.95;
 	padding:0.45rem;
+	padding-left:0.2rem;
 	z-index:2;
 	position: fixed;
 	left:0;
@@ -125,7 +166,7 @@ import { ref } from 'vue'
 	justify-content: space-between;
 	flex-direction: column;
 	transition:all var(--transition-medium);
-	gap:1.6rem;
+	gap:1.8rem;
 	h1,h2,h3 {
 	  color:var(--color-primary);
 	  margin:0;
@@ -146,10 +187,9 @@ import { ref } from 'vue'
 	.range-container {	
 			input[type="range"] {
 			margin-top:0;
-			margin-bottom:0.8rem;
-			width: 10.2rem;
-			height: 0.4rem;
-			border-radius: 5px;
+			width: 10.8rem;
+			height: 0.45rem;
+			border-radius: 15px;
 			accent-color: var(--color-primary);
 		}
 		.info-text-orbits {
@@ -171,7 +211,6 @@ import { ref } from 'vue'
 		}
 	}
 	.btn-row {
-		margin-top:0.6rem;
 		display:flex;
 		gap:0.3rem;
 		width:fit-content;
@@ -204,4 +243,91 @@ import { ref } from 'vue'
   .offsetMenuYposition {
 	top:10vh;
   }
+
+
+
+
+
+
+
+
+
+
+
+  /* SWITCH */
+.switch-container {
+	div {
+		display:flex;
+	}
+  }
+  .switch {
+	border-radius: 18px;
+	cursor: pointer;
+	display: inline-block;
+	height: 1.1rem;
+	width: 3.2rem;
+	position: relative;
+	top:0.25rem;
+  }
+  .switch-input {
+	left: 0;
+	opacity: 0;
+	top: 0;
+	position: absolute;
+  }
+  .switch-label {
+	background: #ccd5d9;
+	border-radius: inherit;
+	display: block;
+	font-size: 0.48rem;
+	height: inherit;
+	position: relative;
+	text-transform: uppercase;
+	transition: all 0.15s ease-out;
+	pointer-events: none;
+	will-change: transform;
+  }
+  .switch-label::before,
+  .switch-label::after {
+	line-height: 1;
+	margin-top: -0.3rem;
+	position: absolute;
+	top: 0.63rem;
+	transition: inherit;
+  }
+  .switch-label::before {
+	color: #aaa;
+	content: attr(data-off);
+	right: 0.5rem;
+  }
+  .switch-label::after {
+	color: rgb(234, 238, 241);
+	content: attr(data-on);
+	left: 0.65rem;
+	opacity: 0;
+  }
+  .switch-input:checked ~ .switch-label {
+	background: var(--color-primary);
+  }
+  .switch-input:checked ~ .switch-label::before {
+	opacity: 0;
+  }
+  .switch-input:checked ~ .switch-label::after {
+	opacity: 1;
+  }
+  .switch-knob {
+	background-color: #f3f5f8;
+	border-radius: 10px;
+	height: 1.1rem;
+	width: 1.1rem;
+	left: 0rem;
+	top: 0rem;
+	position: absolute;
+	transition: left 0.2s ease-out 0s;
+  }
+  
+  .switch-input:checked ~ .switch-knob {
+	left: 2.1rem;
+  }
+  /* End of Switch */
 </style>
