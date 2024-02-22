@@ -342,8 +342,11 @@
 
 				<div v-if="isOrbitViewMode"  v-for="planet, index in planets" :id="planet.name"
 				:class="'planet planet'+(index+1)"
-				:style="
-				'animation: ' +(planet.orbitTime/daysPerSecond)+'s orbit'+(index+1)+' linear infinite; z-index:'+(15-(index+3))+';'"
+				:style="{
+					animation: `orbit${index + 1} ${planet.orbitTime / daysPerSecond}s linear infinite`,
+					animationDelay: `-120s`, 
+					zIndex: 15 - (index + 3),
+				  }"
 				>
 					<!-- <p class="size-in-earths">{{planet.sizeToEarth}} earths</p> -->
 					<img @load="planetImgIsLoaded()" :id="'img-'+planet.name" class="img-planet"  alt="" srcset="">
@@ -480,7 +483,7 @@
     	padding: 300rem;
 		.orbit {
 		  position: absolute;
-		  border:1px solid rgba(255, 255, 255, 0.14);
+		  border:1px solid rgba(255, 255, 255, 0.13);
 		  border-radius: 100%;
 		  transform: translate(-50%, -50%);
 		}
@@ -543,6 +546,8 @@
 		  flex-direction: column;
 		  opacity: 1;
 		  pointer-events: all;
+		  backdrop-filter: blur(2px);
+		  -webkit-backdrop-filter: blur(2px);
 		}
 	  }
 	#img-saturn, #img-simple-saturn {
@@ -564,7 +569,7 @@
 		background: var(--color-background-lower-alpha);
 		border-top-right-radius:var(--border-radius-medium);
 		border-bottom-right-radius:var(--border-radius-medium);
-		border-left:1px solid rgba(135, 206, 250, 0.9);
+		border-left:1px solid var(--color-primary);
 		padding:1.5rem 1.35rem;
 		width:15rem;
 		display: flex;
@@ -620,6 +625,7 @@
 			margin:0 auto;
 			width:9.8rem;
 			outline:none;
+			font-size: var(--font-size-xxsmall);
 		}
 	  }
 	}
