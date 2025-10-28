@@ -16,7 +16,7 @@ import type { Planet } from '../data/types';
 				context.emit('closePlanetDetails', null)
 			}
 
-			function dontAnimateSaturn () {
+			function checkShouldRotate () {
 				if (planet.name === 'saturn') {
 					let imgEl = document.querySelector('.img') as HTMLImageElement
 					imgEl.style.animation = 'none';
@@ -28,6 +28,7 @@ import type { Planet } from '../data/types';
 				let planetImg = document.getElementById('planet-img') as HTMLImageElement
 				let descriptionImg = document.getElementById('description-img') as HTMLImageElement
 				planetImg.src = new URL(`../assets/${planet.name}.png`, import.meta.url).href
+				checkShouldRotate()
 				
 				if (planet.videoUrl) {
 					let descriptionVideo = document.getElementById('description-video') as HTMLImageElement
@@ -37,11 +38,10 @@ import type { Planet } from '../data/types';
 					descriptionImg.src = new URL(`../assets/planets/${planet.name}-img.jpg`, import.meta.url).href
 				}
 			}
-			return {closePlanetDetails, planet,dontAnimateSaturn,setupImages}
+			return {closePlanetDetails, planet,checkShouldRotate,setupImages}
 		},
 		mounted() {
 			this.setupImages()
-			this.dontAnimateSaturn()
 		}
 	}
 </script>
@@ -49,8 +49,10 @@ import type { Planet } from '../data/types';
 <template>
 	<div class="modal-container" @click="closePlanetDetails()" >
 			<div class="modal" @click.stop="">
-				<button class="btn-close" @click="closePlanetDetails()">X</button>
-				<div><h1>{{planet.name}}</h1></div>
+				<div class="title-container">
+					<button class="btn-close" @click="closePlanetDetails()">X</button>
+					<h1>{{planet.name}}</h1>
+				</div>
 				<div class="intro">
 					<img id="planet-img" class="img" alt="" srcset="">
 					<div class="stats">
@@ -77,18 +79,21 @@ import type { Planet } from '../data/types';
 	z-index:2;
 	width:100%;
 	height:100%;
-	background: rgba(0, 0, 0, 0.4);
+	background: rgba(0, 0, 0, 0.1);
 	flex-grow:0 !important;
 	display: flex;
 	flex-direction: column;
 	.modal {
+		filter:brightness(1.05);
+		background: var(--color-background);
+		-webkit-backdrop-filter: blur(15px);
+  		backdrop-filter: blur(15px);
 		overflow-x:hidden;
 		z-index:99;
 		border-radius:var(--border-radius-medium);
-		background: var(--color-background);
 		height:clamp(20rem, 95%, 74rem);
 		width:clamp(20rem, 60rem, 90%);
-		padding:3.5rem;
+		padding:3.1rem 2rem;
 		position: absolute;
 		top:50%;
 		left:50%;
@@ -98,27 +103,40 @@ import type { Planet } from '../data/types';
 		flex-direction: column;
 		gap:2.5rem;
 		overflow-y:auto;
-		.btn-close {
-			position: absolute;
-			top:1px;
-			left:1px;
-			color:rgba(255, 255, 255, 0.83);
-			border:2px solid rgba(255, 255, 255, 0.252);
-			font-size: 1.1rem;
-			&:hover {
-				color:white;
-				border:2px solid rgba(255, 255, 255, 0.812);
+		.title-container {
+			display: flex;
+			position: relative;
+			width: 100%;
+			max-width:53rem;
+			margin:auto;
+			justify-content: space-between;
+
+			.btn-close {
+				position: absolute;
+				left:0;
+				top:-0.8rem;
+				width:3.6rem;
+				height:2.8rem;
+				color:rgba(255, 255, 255, 0.73);
+				border:1px solid rgba(255, 255, 255, 0.252);
+				font-size: 0.85rem;
+				&:hover {
+					color:white;
+					border:1px solid rgba(255, 255, 255, 0.812);
+					background:transparent;
+				}
+			}
+			h1 {
+				margin:auto;
+				text-align: center;
+				text-transform: capitalize;
+				font-size: 2.85rem;
+				letter-spacing: var(--letter-spacing-large);
+				width:fit-content;
 			}
 		}
-		h1 {
-			margin:1rem;
-			text-align: center;
-			text-transform: capitalize;
-			font-size: 2.85rem;
-			letter-spacing: var(--letter-spacing-large);
-		}
 		.intro {
-			max-width: 50rem;
+			max-width: 53rem;
 			margin:auto;
 			width:100%;
 			justify-content: space-around;
@@ -161,11 +179,11 @@ import type { Planet } from '../data/types';
 		.description {
 			letter-spacing: var(--letter-spacing-small);
 			line-height: var(--line-height-lmedium);
-			max-width: 50rem;
+			max-width: 53rem;
 			margin:auto;
 		}
 		.media-container {
-			max-width: 50rem;
+			max-width: 53rem;
 			margin:auto;
 			display:block;
 			width:100%;

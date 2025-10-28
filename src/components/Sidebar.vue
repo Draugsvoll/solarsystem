@@ -152,11 +152,12 @@ import { ref } from 'vue'
 
 <style lang="scss" scoped>
 .sidebar {
+	backdrop-filter:blur(2px);
 	transform:scale(0.93);
 	font-size: var(--font-size-small);
-	opacity:0.95;
+	opacity:0.92;
 	padding:0.45rem;
-	padding-left:0.2rem;
+	padding-left:0.3rem;
 	z-index:2;
 	position: fixed;
 	left:0;
@@ -166,7 +167,7 @@ import { ref } from 'vue'
 	justify-content: space-between;
 	flex-direction: column;
 	transition:all var(--transition-medium);
-	gap:1.8rem;
+	gap:1.5rem;
 	h1,h2,h3 {
 	  color:var(--color-primary);
 	  margin:0;
@@ -176,9 +177,11 @@ import { ref } from 'vue'
 	  display:inline-block;
 	  width:5.5rem;
 	  margin-bottom:0.1rem;
+	  letter-spacing: var(--letter-spacing-small);
 	}
 	#setting-label-all-planets {
 		width:9.6rem;
+		font-style: inherit;
 	}
 	.label-range-input {
 	  display:block;

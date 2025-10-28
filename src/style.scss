@@ -14,20 +14,21 @@
   --line-height-lmedium:1.37rem;
   --line-height-large:1.5rem;
 
-  --color-primary:rgb(91, 177, 231);
-  --color-background:rgba(2, 16, 41, 0.9);
-  --color-background-lower-alpha:rgba(1, 25, 48, 0.82);
-  --color-font-white-transparent:rgba(255, 255, 255, 0.87);
+  --color-primary:rgb(93, 182, 237);
+  --color-background:rgba(2, 10, 22, 0.6);
+  --color-background-lower-alpha:rgba(2, 7, 22, 0.7);
+  
+  --color-font-white-transparent:rgba(255, 255, 255, 0.95);
 
-  --scrollbar-color-thumb:rgba(33, 45, 73, 0.95);
-  --scrollbar-color-thumb-hover:rgba(46, 61, 91, 0.95);
+  --scrollbar-color-thumb:rgba(8, 26, 51, 0.73);
+  --scrollbar-color-thumb-hover:rgba(12, 32, 60, 0.73);
 
   --letter-spacing-xsmall: 0.02rem;
   --letter-spacing-small: 0.04rem;
   --letter-spacing-medium: 0.06rem;
   --letter-spacing-large: 0.08rem;
 
-  --font-size-xxsmall: 0.80rem;
+  --font-size-xxsmall: 0.77rem;
   --font-size-xsmall: 0.85rem;
   --font-size-small: 0.97rem;
   --font-size-medium: 1.06rem;
@@ -104,8 +105,8 @@ h1 {
 
 button {
   border-radius: 4px;
-  border: 2px solid var(--color-primary);
-  padding: 0.53rem 1.2em;
+  border: 1px solid var(--color-primary);
+  padding: 0.6rem 1.3em;
   background:transparent;
   color:var(--color-font-white-transparent);
   transition: border-color 0.25s;
@@ -116,7 +117,7 @@ button {
   font-size: var(--font-size-xsmall);
 }
 button:hover {
-  background:rgba(1, 17, 27, 0.85);
+  background:rgba(1, 17, 27, 0.82);
   color:var(--color-primary);
 }
 
