@@ -6,6 +6,7 @@ import { ref } from 'vue'
 			const brightness = ref(100)
 			const daysPerSecond = ref(10)
 			const isOrbitViewMode = ref(true)
+			const currentYear = new Date().getFullYear()
 
 			const toggleRealSizeAll = (isChecked: HTMLInputElement | boolean) => {
 				if (typeof isChecked === 'object') {
@@ -76,7 +77,7 @@ import { ref } from 'vue'
 			// 	}
 			// }
 
-			return {toggleOrbit, toggleLabels, toggleSun, toggleAnimate, adjustBrightness, brightness,adjustDaysPerSecond,daysPerSecond,fullscreen,toggleViewMode,isOrbitViewMode,toggleRealSizeAll}
+			return {toggleOrbit, toggleLabels, toggleSun, toggleAnimate, adjustBrightness, brightness,adjustDaysPerSecond,daysPerSecond,fullscreen,toggleViewMode,isOrbitViewMode,toggleRealSizeAll, currentYear}
 		},
 		mounted() {
 			this.adjustDaysPerSecond(this.daysPerSecond)
@@ -145,14 +146,15 @@ import { ref } from 'vue'
 			<button :class="{ highlighted : !isOrbitViewMode}" @click="toggleViewMode('simple')">Simple</button>
 		</div>
 		<div class="copyright">
-			<p>&copy; Copyright 2023 <a target="_blank" href="https://ove-portfolio.netlify.app">Ove H. Draugsvoll</a></p>
+			<p>&copy; Copyright {{currentYear}} <a target="_blank" href="https://ove-portfolio.netlify.app">Ove H. Draugsvoll</a></p>
 		</div>
 	</div>
 </template>
 
 <style lang="scss" scoped>
 .sidebar {
-	backdrop-filter:blur(2px);
+	backdrop-filter:blur(3px);
+	-webkit-backdrop-filter: blur(3px);
 	transform:scale(0.93);
 	font-size: var(--font-size-small);
 	opacity:0.92;
@@ -221,13 +223,11 @@ import { ref } from 'vue'
 		button {
 			letter-spacing: var(--letter-spacing-small);
 			min-width:5.3rem;
-			
+			max-width: 6rem;
 		}
 		.highlighted {
-			background:var(--color-primary);
-			&:hover {
-				color: var(--color-font-white-transparent);
-			}
+			text-decoration: underline;
+			text-underline-offset: 0.2rem;   /* moves underline further from text */
 		}
 	}
 	.copyright {

@@ -623,10 +623,12 @@
 		gap:0.65rem;
 		position: relative;
 		button {
+			color:var(--color-font-white-transparent);
 			margin:0 auto;
 			width:9.8rem;
 			outline:none;
 			font-size: var(--font-size-xxsmall);
+			font-size: 0.74rem;
 		}
 	  }
 	}
@@ -681,23 +683,22 @@
   .scroll-btn-container {
 	position: absolute;
 	display: flex;
-	gap:1.15rem;
+	gap:1.75rem;
 	z-index:3;
 	transform: translate(-50%, -50%);
-	top:71%;
+	top:72%;
 	left:50%;
 	  .scroll-btn {
 		font-size: 1.1rem;
-		padding:1.0rem 1.4rem;
-		color:rgba(255,255,255,0.7);
+		padding:1.2rem 1.6rem;
+		max-width:4.5rem;
+		color:rgba(193, 220, 240, 0.918);
 		font-weight: 200;
-		border:1px solid rgba(255,255,255,0.15);
 		z-index:999;
-		background:rgba(0,0,0,0.15);
+		background:rgba(0,0,0,0.43);
+		border:none;
 		&:hover {
-			background:rgba(0,0,0,0.35);
-			border:1px solid rgba(255,255,255,0.25);
-			color:var(--color-primary);
+			background:rgba(0, 0, 0, 0.75);
 		}
 	}
   }

@@ -86,8 +86,8 @@ import type { Planet } from '../data/types';
 	.modal {
 		filter:brightness(1.05);
 		background: var(--color-background);
-		-webkit-backdrop-filter: blur(15px);
-  		backdrop-filter: blur(15px);
+		-webkit-backdrop-filter: blur(30px);
+  		backdrop-filter: blur(30px);
 		overflow-x:hidden;
 		z-index:99;
 		border-radius:var(--border-radius-medium);
@@ -113,18 +113,13 @@ import type { Planet } from '../data/types';
 
 			.btn-close {
 				position: absolute;
-				left:0;
-				top:-0.8rem;
-				width:3.6rem;
-				height:2.8rem;
-				color:rgba(255, 255, 255, 0.73);
-				border:1px solid rgba(255, 255, 255, 0.252);
-				font-size: 0.85rem;
-				&:hover {
-					color:white;
-					border:1px solid rgba(255, 255, 255, 0.812);
-					background:transparent;
-				}
+				left:-0.7rem;
+				top:-1.3rem;
+				width:3.3rem;
+				height:2.6rem;
+				color:rgba(255, 255, 255, 0.7);
+				font-size: 0.75rem;
+				border: 1px solid rgba(177, 203, 225, 0.65);
 			}
 			h1 {
 				margin:auto;
